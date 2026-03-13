@@ -171,6 +171,26 @@
                                 <div><small class="text-muted">Default nonaktif. Centang jika notifikasi WhatsApp sudah siap digunakan.</small></div>
                                 @error('whatsapp_enabled') <small class="text-danger d-block">{{ $message }}</small> @enderror
                             </div>
+
+                            <div class="form-group mb-3">
+                                <label for="ticket_valid_days">Masa Berlaku Tiket <sup class="text-danger">(Hari)</sup></label>
+                                <div class="input-group">
+                                    <input type="number" name="ticket_valid_days" id="ticket_valid_days" class="form-control" value="{{ $setting->ticket_valid_days ?? old('ticket_valid_days', 1) }}" min="0">
+                                    <span class="input-group-text">Hari</span>
+                                </div>
+                                <small class="text-muted">Isi 0 jika tiket bisa digunakan kapan saja.</small>
+                                @error('ticket_valid_days') <br><small class="text-danger">{{ $message }}</small> @enderror
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="ticket_scan_limit">Batas Scan Tiket (Selama Masa Aktif)</label>
+                                <div class="input-group">
+                                    <input type="number" name="ticket_scan_limit" id="ticket_scan_limit" class="form-control" value="{{ $setting->ticket_scan_limit ?? old('ticket_scan_limit', 0) }}" min="0">
+                                    <span class="input-group-text">Kali</span>
+                                </div>
+                                <small class="text-muted">Contoh: isi 5 untuk maksimal 5x scan. Isi 0 jika tidak dibatasi.</small>
+                                @error('ticket_scan_limit') <br><small class="text-danger">{{ $message }}</small> @enderror
+                            </div>
                         </div>
                     </div>
                 </div>

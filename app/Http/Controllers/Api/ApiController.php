@@ -8,6 +8,7 @@ use App\Models\History;
 use App\Models\LimitMember;
 use App\Models\Member;
 use App\Models\Membership;
+use App\Models\Setting;
 use App\Models\Terusan;
 use App\Models\Ticket;
 use App\Models\Transaction;
@@ -50,12 +51,29 @@ class ApiController extends Controller
     public function checkIndividualTicket($ticket)
     {
 
-        $transScanned = DetailTransaction::where('ticket_code', $ticket)
-            ->select(['qty', 'scanned', 'status'])->first();
+        $transScanned = DetailTransaction::with('transaction')
+            ->where('ticket_code', $ticket)
+            ->first();
 
         if (!$transScanned) {
             return response()->json([
                 "status" => "Not found"
+            ]);
+        }
+
+        if (!$this->isTicketWithinValidity($transScanned->transaction?->created_at)) {
+            return response()->json([
+                "status" => "close",
+                "count" => 0,
+                "message" => "Ticket expired"
+            ]);
+        }
+
+        $maxAllowed = $this->resolveMaxScan((int) $transScanned->qty);
+        if ($maxAllowed <= 0 || (int) $transScanned->scanned >= $maxAllowed) {
+            return response()->json([
+                "status" => "close",
+                "count" => 0
             ]);
         }
 
@@ -66,41 +84,54 @@ class ApiController extends Controller
             ]);
         }
 
-        // $counting = $transScanned->scanned + 1;
-        // if ($transScanned->qty == $counting) {
-        DetailTransaction::where('ticket_code', $ticket)
-            ->update([
-                "status" => "close",
-                // "scanned" => $counting
-            ]);
-        // } else {
-        //     DetailTransaction::where('ticket_code', $ticket)
-        //         ->update([
-        //             "scanned" => $counting
-        //         ]);
-        // }
+        $counting = (int) $transScanned->scanned + 1;
+        $payload = [
+            "scanned" => $counting,
+        ];
+
+        if ($counting >= $maxAllowed) {
+            $payload["status"] = "close";
+            $payload["scanned_at"] = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
+        }
+
+        DetailTransaction::where('ticket_code', $ticket)->update($payload);
 
         return response()->json([
             "status" => $transScanned->status,
-            "count" => $transScanned->qty
+            "count" => max(0, $maxAllowed - $counting)
         ]);
     }
 
     public function checkGroupTicket(Request $request, $ticket)
     {
         $transScanned = Transaction::where('ticket_code', $ticket)->where('tipe', 'group')
-            ->select(['amount', 'amount_scanned', 'status'])->first();
-
-        Transaction::where('ticket_code', $ticket)
-            ->update([
-                "gate" => $request->gate,
-            ]);
+            ->first();
 
         if (!$transScanned) {
             return response()->json([
                 "status" => "not found"
             ]);
         }
+
+        if (!$this->isTicketWithinValidity($transScanned->created_at)) {
+            return response()->json([
+                "status" => "closed",
+                "count" => 0,
+                "message" => "Ticket expired"
+            ]);
+        }
+
+        $maxAllowed = $this->resolveMaxScan((int) $transScanned->amount);
+        if ($maxAllowed <= 0 || (int) $transScanned->amount_scanned >= $maxAllowed) {
+            return response()->json([
+                "status" => "closed",
+                "count" => 0
+            ]);
+        }
+
+        $transScanned->update([
+            "gate" => $request->gate,
+        ]);
 
 
         if ($transScanned->status == "closed") {
@@ -112,7 +143,7 @@ class ApiController extends Controller
 
         $counting = $transScanned->amount_scanned + 1;
 
-        if ($transScanned->amount == $counting) {
+        if ($counting >= $maxAllowed) {
             Transaction::where('ticket_code', $ticket)
                 ->update([
                     "status" => "closed",
@@ -127,14 +158,14 @@ class ApiController extends Controller
 
         return response()->json([
             "status" => $transScanned->status,
-            "count" => $transScanned->amount - $counting
+            "count" => max(0, $maxAllowed - $counting)
         ]);
     }
 
     // In Use
     public function check(Request $request)
     {
-        $transScanned = DetailTransaction::where('ticket_code', $request->ticket)->first();
+        $transScanned = DetailTransaction::with('transaction')->where('ticket_code', $request->ticket)->first();
 if (empty($request->ticket)) {
         return response()->json([
             "status" => "error",
@@ -142,6 +173,13 @@ if (empty($request->ticket)) {
         ], 400);
     }
         if ($transScanned) {
+            if (!$this->isTicketWithinValidity($transScanned->transaction?->created_at)) {
+                return response()->json([
+                    "status" => "close",
+                    "message" => "Ticket expired"
+                ]);
+            }
+
             $invoice = Transaction::where('id', $transScanned->transaction_id)->first();
 
             DetailTransaction::where('ticket_code', $request->ticket)
@@ -155,7 +193,7 @@ if (empty($request->ticket)) {
                 ]);
             }
 
-            if ($invoice->detail()->sum('scanned') >= $invoice->detail()->sum('qty')) {
+            if ($this->shouldCloseInvoice($invoice)) {
                 $invoice->status = "closed";
                 $invoice->amount_scanned = $invoice->detail()->sum('scanned');
                 $invoice->save();
@@ -173,8 +211,16 @@ if (empty($request->ticket)) {
                 ]);
             }
 
+            $maxAllowed = $this->resolveMaxScan((int) $transScanned->qty);
+            if ($maxAllowed <= 0 || (int) $transScanned->scanned >= $maxAllowed) {
+                return response()->json([
+                    "status" => "close",
+                    "count" => 0
+                ]);
+            }
+
             $counting = $transScanned->scanned + 1;
-            if ($transScanned->qty == $counting) {
+            if ($counting >= $maxAllowed) {
                 DetailTransaction::where('ticket_code', $request->ticket)
                     ->update([
                         "status" => "close",
@@ -182,7 +228,7 @@ if (empty($request->ticket)) {
                         "scanned_at" => Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s')
                     ]);
 
-                if ($invoice->detail()->sum('scanned') >= ($invoice->detail()->sum('qty'))) {
+                if ($this->shouldCloseInvoice($invoice)) {
                     $invoice->status = "closed";
                     $invoice->amount_scanned = $invoice->detail()->sum('scanned');
                     $invoice->save();
@@ -196,7 +242,7 @@ if (empty($request->ticket)) {
 
             return response()->json([
                 "status" => $transScanned->status,
-                "count" => $transScanned->qty - $counting
+                "count" => max(0, $maxAllowed - $counting)
             ]);
         } else {
             $now = Carbon::now('Asia/Jakarta')->format('Y-m-d');
@@ -308,14 +354,30 @@ if (empty($request->ticket)) {
     public function gateTerusan(Request $request)
     {
         $ticket = Transaction::where('ticket_code', $request->ticket)->first();
-        $now = Carbon::now('Asia/Jakarta')->format('Y-m-d');
-        $date = Carbon::parse($ticket->created_at)->format('Y-m-d');
 
         if ($ticket) {
-            if ($ticket->ticket->jenis_ticket_id == 2 && $date == $now) {
+            if ($ticket->ticket->jenis_ticket_id == 2 && $this->isTicketWithinValidity($ticket->created_at)) {
+                $maxAllowed = $this->resolveMaxScan((int) $ticket->amount);
+                if ($maxAllowed <= 0 || (int) $ticket->amount_scanned >= $maxAllowed) {
+                    return response()->json([
+                        "status" => 'close',
+                    ]);
+                }
+
                 $terusan = Terusan::where('tripod', $request->tripod)->first();
 
                 if ($terusan) {
+                    $nextCount = (int) $ticket->amount_scanned + 1;
+                    $payload = [
+                        'amount_scanned' => $nextCount,
+                    ];
+
+                    if ($nextCount >= $maxAllowed) {
+                        $payload['status'] = 'closed';
+                    }
+
+                    $ticket->update($payload);
+
                     return response()->json([
                         "status" => 'open',
                     ]);
@@ -334,6 +396,60 @@ if (empty($request->ticket)) {
                 "status" => 'close',
             ]);
         }
+    }
+
+    private function isTicketWithinValidity(mixed $createdAt): bool
+    {
+        $validDays = (int) Setting::valueOf('ticket_valid_days', 1);
+        if ($validDays <= 0) {
+            return true;
+        }
+
+        if (empty($createdAt)) {
+            return false;
+        }
+
+        $now = Carbon::now('Asia/Jakarta')->startOfDay();
+        $created = Carbon::parse($createdAt)->timezone('Asia/Jakarta')->startOfDay();
+        $diffDays = $created->diffInDays($now, false);
+
+        return $diffDays >= 0 && $diffDays < $validDays;
+    }
+
+    private function resolveMaxScan(int $qty): int
+    {
+        $limit = (int) Setting::valueOf('ticket_scan_limit', 0);
+        $qty = max($qty, 0);
+
+        if ($limit <= 0) {
+            return $qty;
+        }
+
+        if ($qty <= 0) {
+            return $limit;
+        }
+
+        return min($qty, $limit);
+    }
+
+    private function shouldCloseInvoice(Transaction $invoice): bool
+    {
+        $details = $invoice->detail()->get(['id', 'qty', 'scanned']);
+        if ($details->isEmpty()) {
+            return false;
+        }
+
+        foreach ($details as $detail) {
+            $allowed = $this->resolveMaxScan((int) $detail->qty);
+            if ($allowed <= 0) {
+                return false;
+            }
+            if ((int) $detail->scanned < $allowed) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function detailGroup()

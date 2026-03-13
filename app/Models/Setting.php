@@ -22,9 +22,12 @@ class Setting extends Model
         'member_suspend_after_days' => 0,
         'ticket_code_mode' => 'unique',
         'ticket_print_orientation' => 'without_summary',
+        'ticket_valid_days' => 1,
+        'ticket_scan_limit' => 0,
         'dashboard_metric_mode' => 'amount',
         'whatsapp_enabled' => 0,
         'use_logo' => 0,
+        'website_status' => 1,
         'renewal_notice_club_name' => 'Sport Club Anwa Puri',
         'renewal_notice_bank_account' => 'TRANSFER BANK: BCA 0289011155 A/N PT KARTUNINDO PERKASA ABADI',
         'renewal_notice_admin_phone' => '0821 2222 9358',
@@ -57,8 +60,11 @@ class Setting extends Model
         $merged['ppn'] = (int) $merged['ppn'];
         $merged['member_suspend_before_days'] = max((int) $merged['member_suspend_before_days'], 1);
         $merged['member_suspend_after_days'] = max((int) $merged['member_suspend_after_days'], 0);
+        $merged['ticket_valid_days'] = max((int) $merged['ticket_valid_days'], 0);
+        $merged['ticket_scan_limit'] = max((int) $merged['ticket_scan_limit'], 0);
         $merged['whatsapp_enabled'] = (int) $merged['whatsapp_enabled'];
         $merged['use_logo'] = (int) $merged['use_logo'];
+        $merged['website_status'] = (int) $merged['website_status'];
 
         return $merged;
     }

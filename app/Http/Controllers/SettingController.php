@@ -51,6 +51,8 @@ class SettingController extends Controller
                 'member_suspend_after_days' => 'required|integer|min:0',
                 'ticket_code_mode' => 'required|in:shared,unique',
                 'ticket_print_orientation' => 'required|in:with_summary,without_summary',
+                'ticket_valid_days' => 'required|integer|min:0',
+                'ticket_scan_limit' => 'required|integer|min:0',
                 'dashboard_metric_mode' => 'required|in:amount,count',
                 'whatsapp_enabled' => 'nullable|boolean',
             ];

@@ -14,7 +14,7 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
--- Dumping structure for table db_membership.detail_transactions
+-- Dumping structure for table miu.detail_transactions
 CREATE TABLE IF NOT EXISTS `detail_transactions` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `transaction_id` bigint unsigned NOT NULL,
@@ -24,8 +24,8 @@ CREATE TABLE IF NOT EXISTS `detail_transactions` (
   `ppn` decimal(12,2) NOT NULL DEFAULT '0.00',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `ticket_code` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `status` enum('open','close') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'open',
+  `ticket_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` enum('open','close') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'open',
   `scanned` int NOT NULL DEFAULT '0',
   `scanned_at` timestamp NULL DEFAULT NULL,
   `gate` int DEFAULT NULL,
@@ -33,30 +33,30 @@ CREATE TABLE IF NOT EXISTS `detail_transactions` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table db_membership.detail_transactions: ~9 rows (approximately)
+-- Dumping data for table miu.detail_transactions: ~0 rows (approximately)
 DELETE FROM `detail_transactions`;
 
--- Dumping structure for table db_membership.failed_jobs
+-- Dumping structure for table miu.failed_jobs
 CREATE TABLE IF NOT EXISTS `failed_jobs` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `uuid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `connection` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `queue` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `exception` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `uuid` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `connection` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `queue` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `exception` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `failed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table db_membership.failed_jobs: ~0 rows (approximately)
+-- Dumping data for table miu.failed_jobs: ~0 rows (approximately)
 DELETE FROM `failed_jobs`;
 
--- Dumping structure for table db_membership.gate_accesses
+-- Dumping structure for table miu.gate_accesses
 CREATE TABLE IF NOT EXISTS `gate_accesses` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `gate_access_id` char(25) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `gate_access_id` char(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `is_active` int NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -64,12 +64,12 @@ CREATE TABLE IF NOT EXISTS `gate_accesses` (
   UNIQUE KEY `gate_accesses_gate_access_id_unique` (`gate_access_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table db_membership.gate_accesses: ~1 rows (approximately)
+-- Dumping data for table miu.gate_accesses: ~0 rows (approximately)
 DELETE FROM `gate_accesses`;
 INSERT INTO `gate_accesses` (`id`, `gate_access_id`, `name`, `is_active`, `created_at`, `updated_at`) VALUES
 	(1, '1', 'Main GATE', 1, '2026-01-30 07:41:51', '2026-01-30 08:28:04');
 
--- Dumping structure for table db_membership.gate_access_membership
+-- Dumping structure for table miu.gate_access_membership
 CREATE TABLE IF NOT EXISTS `gate_access_membership` (
   `gate_access_id` bigint unsigned NOT NULL,
   `membership_id` bigint unsigned NOT NULL,
@@ -79,14 +79,24 @@ CREATE TABLE IF NOT EXISTS `gate_access_membership` (
   CONSTRAINT `gate_access_membership_membership_id_foreign` FOREIGN KEY (`membership_id`) REFERENCES `memberships` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table db_membership.gate_access_membership: ~2 rows (approximately)
+-- Dumping data for table miu.gate_access_membership: ~13 rows (approximately)
 DELETE FROM `gate_access_membership`;
 INSERT INTO `gate_access_membership` (`gate_access_id`, `membership_id`) VALUES
 	(1, 1),
 	(1, 2),
-	(1, 3);
+	(1, 3),
+	(1, 6),
+	(1, 7),
+	(1, 8),
+	(1, 9),
+	(1, 10),
+	(1, 11),
+	(1, 12),
+	(1, 13),
+	(1, 14),
+	(1, 15);
 
--- Dumping structure for table db_membership.histories
+-- Dumping structure for table miu.histories
 CREATE TABLE IF NOT EXISTS `histories` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `member_id` int DEFAULT '0',
@@ -96,27 +106,19 @@ CREATE TABLE IF NOT EXISTS `histories` (
   `waktu` timestamp NULL DEFAULT NULL,
   `user_id` int DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table db_membership.histories: ~8 rows (approximately)
+-- Dumping data for table miu.histories: ~0 rows (approximately)
 DELETE FROM `histories`;
-INSERT INTO `histories` (`id`, `member_id`, `gate`, `created_at`, `updated_at`, `waktu`, `user_id`) VALUES
-	(1, 1, 1, '2026-01-30 09:34:00', '2026-01-30 09:34:00', '2026-01-30 09:34:00', 0),
-	(2, 1, 1, '2026-01-30 09:34:22', '2026-01-30 09:34:22', '2026-01-30 09:34:22', 0),
-	(3, 1, 1, '2026-01-30 09:34:37', '2026-01-30 09:34:37', '2026-01-30 09:34:37', 0),
-	(4, 3, 1, '2026-01-30 09:35:22', '2026-01-30 09:35:22', '2026-01-30 09:35:22', 0),
-	(5, 3, 1, '2026-01-30 09:35:23', '2026-01-30 09:35:23', '2026-01-30 09:35:23', 0),
-	(6, 3, 1, '2026-01-30 09:35:24', '2026-01-30 09:35:24', '2026-01-30 09:35:24', 0),
-	(7, 1, 1, '2026-01-30 09:35:57', '2026-01-30 09:35:57', '2026-01-30 09:35:57', 0);
 
--- Dumping structure for table db_membership.history_memberships
+-- Dumping structure for table miu.history_memberships
 CREATE TABLE IF NOT EXISTS `history_memberships` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `membership_id` bigint unsigned NOT NULL,
   `member_id` bigint unsigned NOT NULL,
   `start_date` date NOT NULL,
   `end_date` date DEFAULT NULL,
-  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -124,43 +126,12 @@ CREATE TABLE IF NOT EXISTS `history_memberships` (
   KEY `history_memberships_member_id_foreign` (`member_id`),
   CONSTRAINT `history_memberships_member_id_foreign` FOREIGN KEY (`member_id`) REFERENCES `members` (`id`) ON DELETE CASCADE,
   CONSTRAINT `history_memberships_membership_id_foreign` FOREIGN KEY (`membership_id`) REFERENCES `memberships` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=72 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table db_membership.history_memberships: ~26 rows (approximately)
+-- Dumping data for table miu.history_memberships: ~0 rows (approximately)
 DELETE FROM `history_memberships`;
-INSERT INTO `history_memberships` (`id`, `membership_id`, `member_id`, `start_date`, `end_date`, `status`, `created_at`, `updated_at`) VALUES
-	(1, 2, 1, '2026-01-30', '2026-04-30', 'active', '2026-01-30 08:48:59', '2026-01-30 08:48:59'),
-	(2, 2, 2, '2026-01-30', '2026-04-30', 'active', '2026-01-30 08:48:59', '2026-01-30 08:48:59'),
-	(3, 2, 3, '2026-01-30', '2026-04-30', 'active', '2026-01-30 08:48:59', '2026-01-30 08:48:59'),
-	(4, 2, 4, '2026-01-30', '2026-04-30', 'active', '2026-01-30 08:48:59', '2026-01-30 08:48:59'),
-	(19, 2, 1, '2026-02-12', '2026-05-13', 'active', '2026-02-10 03:36:17', '2026-02-10 03:36:17'),
-	(20, 2, 2, '2026-02-12', '2026-05-13', 'active', '2026-02-10 03:36:17', '2026-02-10 03:36:17'),
-	(21, 2, 3, '2026-02-12', '2026-05-13', 'active', '2026-02-10 03:36:17', '2026-02-10 03:36:17'),
-	(22, 2, 4, '2026-02-12', '2026-05-13', 'active', '2026-02-10 03:36:17', '2026-02-10 03:36:17'),
-	(39, 2, 1, '2026-02-19', '2026-05-20', 'active', '2026-02-19 07:52:17', '2026-02-19 07:52:17'),
-	(40, 2, 2, '2026-02-19', '2026-05-20', 'active', '2026-02-19 07:52:17', '2026-02-19 07:52:17'),
-	(41, 2, 3, '2026-02-19', '2026-05-20', 'active', '2026-02-19 07:52:17', '2026-02-19 07:52:17'),
-	(42, 2, 4, '2026-02-19', '2026-05-20', 'active', '2026-02-19 07:52:17', '2026-02-19 07:52:17'),
-	(54, 3, 19, '2026-02-24', '2026-03-01', 'active', '2026-02-24 05:45:14', '2026-02-24 05:45:14'),
-	(55, 3, 19, '2026-03-02', '2026-03-07', 'active', '2026-02-25 05:36:24', '2026-02-25 05:36:24'),
-	(56, 1, 20, '2026-02-25', '2026-03-27', 'active', '2026-02-25 05:41:35', '2026-02-25 05:41:35'),
-	(57, 2, 1, '2026-02-25', '2026-05-26', 'active', '2026-02-25 05:48:14', '2026-02-25 05:48:14'),
-	(58, 2, 2, '2026-02-25', '2026-05-26', 'active', '2026-02-25 05:48:14', '2026-02-25 05:48:14'),
-	(59, 2, 3, '2026-02-25', '2026-05-26', 'active', '2026-02-25 05:48:14', '2026-02-25 05:48:14'),
-	(60, 2, 4, '2026-02-25', '2026-05-26', 'active', '2026-02-25 05:48:14', '2026-02-25 05:48:14'),
-	(61, 1, 21, '2026-02-25', '2026-03-27', 'active', '2026-02-25 05:52:29', '2026-02-25 05:52:29'),
-	(62, 1, 22, '2026-02-25', '2026-03-27', 'active', '2026-02-25 05:53:00', '2026-02-25 05:53:00'),
-	(63, 3, 23, '2026-02-25', '2026-03-02', 'active', '2026-02-25 05:55:15', '2026-02-25 05:55:15'),
-	(64, 3, 23, '2026-03-03', '2026-03-08', 'active', '2026-02-25 05:55:51', '2026-02-25 05:55:51'),
-	(65, 3, 19, '2026-02-25', '2026-03-02', 'active', '2026-02-25 08:57:45', '2026-02-25 08:57:45'),
-	(66, 1, 20, '2026-02-25', '2026-03-27', 'active', '2026-02-25 09:02:55', '2026-02-25 09:02:55'),
-	(67, 3, 23, '2026-02-27', '2026-03-04', 'active', '2026-02-27 03:32:22', '2026-02-27 03:32:22'),
-	(68, 1, 21, '2026-02-27', '2026-03-29', 'active', '2026-02-27 03:33:59', '2026-02-27 03:33:59'),
-	(69, 1, 21, '2026-02-27', '2026-03-29', 'active', '2026-02-27 06:28:12', '2026-02-27 06:28:12'),
-	(70, 1, 21, '2026-02-27', '2026-03-29', 'active', '2026-02-27 06:28:38', '2026-02-27 06:28:38'),
-	(71, 1, 21, '2026-02-27', '2026-03-29', 'active', '2026-02-27 06:31:27', '2026-02-27 06:31:27');
 
--- Dumping structure for table db_membership.history_penyewaans
+-- Dumping structure for table miu.history_penyewaans
 CREATE TABLE IF NOT EXISTS `history_penyewaans` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `member_id` bigint unsigned NOT NULL,
@@ -174,25 +145,25 @@ CREATE TABLE IF NOT EXISTS `history_penyewaans` (
   CONSTRAINT `history_penyewaans_penyewaan_id_foreign` FOREIGN KEY (`penyewaan_id`) REFERENCES `penyewaans` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table db_membership.history_penyewaans: ~0 rows (approximately)
+-- Dumping data for table miu.history_penyewaans: ~0 rows (approximately)
 DELETE FROM `history_penyewaans`;
 
--- Dumping structure for table db_membership.jenis_tickets
+-- Dumping structure for table miu.jenis_tickets
 CREATE TABLE IF NOT EXISTS `jenis_tickets` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `nama_jenis` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nama_jenis` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table db_membership.jenis_tickets: ~2 rows (approximately)
+-- Dumping data for table miu.jenis_tickets: ~2 rows (approximately)
 DELETE FROM `jenis_tickets`;
 INSERT INTO `jenis_tickets` (`id`, `nama_jenis`, `created_at`, `updated_at`) VALUES
 	(1, 'Reguler', '2026-01-30 07:32:23', '2026-01-30 07:32:23'),
 	(2, 'Terusan', '2026-01-30 07:32:23', '2026-01-30 07:32:23');
 
--- Dumping structure for table db_membership.limit_members
+-- Dumping structure for table miu.limit_members
 CREATE TABLE IF NOT EXISTS `limit_members` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `limit` int NOT NULL DEFAULT '0',
@@ -201,56 +172,45 @@ CREATE TABLE IF NOT EXISTS `limit_members` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table db_membership.limit_members: ~0 rows (approximately)
+-- Dumping data for table miu.limit_members: ~0 rows (approximately)
 DELETE FROM `limit_members`;
 
--- Dumping structure for table db_membership.members
+-- Dumping structure for table miu.members
 CREATE TABLE IF NOT EXISTS `members` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `parent_id` int DEFAULT '0',
   `membership_id` bigint DEFAULT '0',
-  `member_code` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `rfid` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `rfid` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `no_ktp` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `no_hp` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `nama` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `access_used` int NOT NULL DEFAULT '0',
-  `alamat` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `no_hp` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nama` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `alamat` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `tgl_lahir` date NOT NULL,
   `tgl_register` date NOT NULL,
   `tgl_expired` date NOT NULL,
   `saldo` int NOT NULL DEFAULT '0',
   `is_active` int NOT NULL DEFAULT '0',
-  `jenis_kelamin` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `image_profile` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `qr_code` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `jenis_kelamin` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `image_profile` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `qr_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `limit` int NOT NULL DEFAULT '0',
-  `jenis_member` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `jenis_member` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `access_used` int NOT NULL DEFAULT '0',
+  `member_code` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `members_member_code_unique` (`member_code`),
   UNIQUE KEY `members_rfid_unique` (`rfid`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table db_membership.members: ~9 rows (approximately)
+-- Dumping data for table miu.members: ~0 rows (approximately)
 DELETE FROM `members`;
-INSERT INTO `members` (`id`, `parent_id`, `membership_id`, `member_code`, `rfid`, `no_ktp`, `no_hp`, `nama`, `access_used`, `alamat`, `tgl_lahir`, `tgl_register`, `tgl_expired`, `saldo`, `is_active`, `jenis_kelamin`, `image_profile`, `qr_code`, `created_at`, `updated_at`, `limit`, `jenis_member`) VALUES
-	(1, 0, 2, 'MBR000001', NULL, '3277654567825678', '6289637761500', 'Budi', 0, 'Jl. Melati No. 123, Jakarta', '2026-01-30', '2026-01-30', '2026-02-26', 0, 1, 'L', NULL, 'MBRBVCAWZRZ7WXN2', '2026-01-30 08:48:59', '2026-02-25 05:48:14', 0, NULL),
-	(2, 1, 2, 'MBR000002', NULL, '3277654567825678', '6289637761500', 'Dina', 0, 'Jl. Melati No. 123, Jakarta', '2026-01-30', '2026-01-30', '2026-02-26', 0, 1, 'L', NULL, 'MBRVK4DFYKK4BCKU', '2026-01-30 08:48:59', '2026-02-25 05:48:14', 0, NULL),
-	(3, 1, 2, 'MBR000003', NULL, '3277654567825678', '6289637761500', 'Andi', 0, 'Jl. Melati No. 123, Jakarta', '2026-01-30', '2026-01-30', '2026-02-26', 0, 1, 'L', NULL, 'MBRPWQMAWVI7SSCF', '2026-01-30 08:48:59', '2026-02-25 05:48:14', 0, NULL),
-	(4, 1, 1, 'MBR000004', NULL, '3277654567825678', '6289637761500', 'Rara', 0, 'Jl. Melati No. 123, Jakarta', '2026-01-30', '2026-01-30', '2026-02-26', 0, 1, 'L', NULL, 'MBRJPG3DKVV3W5TO', '2026-01-30 08:48:59', '2026-02-25 05:48:14', 0, NULL),
-	(19, 0, 3, 'MSH00300001A', NULL, '7879', '08987654', 'Anggie', 0, 'Bandung', '2026-02-24', '2026-02-24', '2026-03-02', 0, 1, 'L', NULL, 'MBRTOBHEE4MS9MOJ', '2026-02-24 05:45:14', '2026-02-25 08:57:45', 0, NULL),
-	(20, 0, 1, 'MBR/0020', '22222222222', '575', '08954754776', 'Rahma', 0, 'Bandung', '2026-02-18', '2026-02-25', '2026-03-27', 0, 1, 'L', NULL, 'MBR/0020', '2026-02-25 05:41:35', '2026-02-25 09:02:55', 0, NULL),
-	(21, 0, 1, 'MBR/0021', NULL, NULL, '646564', 'Kino', 0, 'Cimahi', '2026-02-10', '2026-02-25', '2026-03-29', 0, 1, 'L', NULL, 'MBR/0021', '2026-02-25 05:52:29', '2026-02-27 06:31:27', 0, NULL),
-	(22, 0, 1, 'MBR/0022', NULL, '908980', '9059043859403', 'Jiju', 0, 'Cimahi', '2026-02-18', '2026-02-25', '2026-02-27', 0, 1, 'L', NULL, 'MBR/0022', '2026-02-25 05:53:00', '2026-02-25 05:53:00', 0, NULL),
-	(23, 0, 3, 'MV/0023', NULL, '8943', '8048204', 'DImaski', 0, 'Cimahi', '2026-02-18', '2026-02-25', '2026-03-04', 0, 1, 'L', NULL, 'MV/0023', '2026-02-25 05:55:15', '2026-02-27 03:32:22', 0, NULL);
 
--- Dumping structure for table db_membership.memberships
+-- Dumping structure for table miu.memberships
 CREATE TABLE IF NOT EXISTS `memberships` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `code` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `duration_days` int NOT NULL,
   `price` double NOT NULL,
   `max_person` int NOT NULL DEFAULT '1',
@@ -260,25 +220,51 @@ CREATE TABLE IF NOT EXISTS `memberships` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `max_access` int NOT NULL DEFAULT '0',
+  `code` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table db_membership.memberships: ~3 rows (approximately)
+-- Dumping data for table miu.memberships: ~13 rows (approximately)
 DELETE FROM `memberships`;
-INSERT INTO `memberships` (`id`, `name`, `code`, `duration_days`, `price`, `max_person`, `is_active`, `use_ppn`, `ppn`, `created_at`, `updated_at`, `max_access`) VALUES
-	(1, 'Member Bulanan Reguler', 'MBR', 30, 150000, 1, 1, 0, 0.00, '2026-01-30 08:44:15', '2026-02-24 07:36:03', 10),
-	(2, 'Family Pass 3 Bulan', 'FP', 90, 500000, 4, 1, 1, 0.00, '2026-01-30 08:45:02', '2026-02-24 07:36:11', 5),
-	(3, 'Member VIP', 'MV', 5, 20000, 1, 1, 0, 0.00, '2026-02-12 02:11:15', '2026-02-24 07:35:55', 0);
+INSERT INTO `memberships` (`id`, `name`, `duration_days`, `price`, `max_person`, `is_active`, `use_ppn`, `ppn`, `created_at`, `updated_at`, `max_access`, `code`) VALUES
+	(1, 'FAMILY 4 DEWASA NEW', 31, 1225000, 5, 1, 0, 0.00, '2026-01-30 08:44:15', '2026-03-03 11:51:55', 0, 'FM04'),
+	(2, 'FAMILY 3 DEWASA NEW', 31, 1040000, 5, 1, 0, 0.00, '2026-01-30 08:45:02', '2026-03-03 11:50:11', 0, 'FM03'),
+	(3, 'FAMILY 2 DEWASA NEW', 31, 875000, 5, 1, 0, 0.00, '2026-02-03 06:43:24', '2026-03-04 01:42:17', 0, 'FM02'),
+	(6, 'SINGLE NEW', 31, 575000, 1, 1, 0, 0.00, '2026-03-04 01:43:21', '2026-03-04 01:55:57', 0, 'SG01'),
+	(7, 'STUDENT NEW', 31, 375000, 1, 1, 0, 0.00, '2026-03-04 01:44:54', '2026-03-04 01:55:49', 0, 'M01'),
+	(8, 'ADMIN FAMILY', 31, 150000, 5, 1, 0, 0.00, '2026-03-04 01:46:19', '2026-03-04 01:46:19', 0, 'FM'),
+	(9, 'ADMIN SINGLE', 31, 100000, 1, 1, 0, 0.00, '2026-03-04 01:47:56', '2026-03-04 01:47:56', 0, 'SG'),
+	(10, 'ADMIN STUDENT', 31, 75000, 1, 1, 0, 0.00, '2026-03-04 01:48:44', '2026-03-04 01:49:14', 0, 'M'),
+	(11, 'FAMILY 2 DEWASA', 31, 725000, 5, 1, 0, 0.00, '2026-03-04 01:53:36', '2026-03-04 01:53:36', 0, 'FM.02'),
+	(12, 'FAMILY 3 DEWASA', 31, 890000, 5, 1, 0, 0.00, '2026-03-04 01:54:31', '2026-03-04 01:54:31', 0, 'FM.03'),
+	(13, 'FAMILY 4 DEWASA', 31, 1075000, 5, 1, 0, 0.00, '2026-03-04 01:55:26', '2026-03-04 01:55:26', 0, 'FM.04'),
+	(14, 'SINGLE', 31, 475000, 1, 1, 0, 0.00, '2026-03-04 01:56:30', '2026-03-04 01:56:30', 0, 'SG.01'),
+	(15, 'STUDENT', 31, 300000, 1, 1, 0, 0.00, '2026-03-04 01:57:26', '2026-03-04 01:57:26', 0, 'M.01');
 
--- Dumping structure for table db_membership.migrations
+-- Dumping structure for table miu.membership_admin_fees
+CREATE TABLE IF NOT EXISTS `membership_admin_fees` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `admin_type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `admin_fee` bigint unsigned NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Dumping data for table miu.membership_admin_fees: ~0 rows (approximately)
+DELETE FROM `membership_admin_fees`;
+INSERT INTO `membership_admin_fees` (`id`, `admin_type`, `admin_fee`, `created_at`, `updated_at`) VALUES
+	(1, 'Admin Membership', 30000, '2026-03-06 05:48:04', '2026-03-06 05:48:04');
+
+-- Dumping structure for table miu.migrations
 CREATE TABLE IF NOT EXISTS `migrations` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `migration` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table db_membership.migrations: ~42 rows (approximately)
+-- Dumping data for table miu.migrations: ~44 rows (approximately)
 DELETE FROM `migrations`;
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 	(1, '2014_10_12_000000_create_users_table', 1),
@@ -322,57 +308,64 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 	(39, '2025_11_10_105325_add_max_person_to_memberships_table', 1),
 	(40, '2025_11_10_194953_add_parent_id_to_members_table', 1),
 	(41, '2025_11_11_090340_create_history_memberships_table', 1),
-	(42, '2025_11_11_141124_add_scanned_at_to_detail_transactions_table', 1);
+	(42, '2025_11_11_141124_add_scanned_at_to_detail_transactions_table', 1),
+	(43, '2026_03_06_120000_create_membership_admin_fees_table', 2),
+	(44, '2026_03_06_130000_simplify_membership_admin_fees_table', 3);
 
--- Dumping structure for table db_membership.model_has_permissions
+-- Dumping structure for table miu.model_has_permissions
 CREATE TABLE IF NOT EXISTS `model_has_permissions` (
   `permission_id` bigint unsigned NOT NULL,
-  `model_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `model_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `model_id` bigint unsigned NOT NULL,
   PRIMARY KEY (`permission_id`,`model_id`,`model_type`),
   KEY `model_has_permissions_model_id_model_type_index` (`model_id`,`model_type`),
   CONSTRAINT `model_has_permissions_permission_id_foreign` FOREIGN KEY (`permission_id`) REFERENCES `permissions` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table db_membership.model_has_permissions: ~0 rows (approximately)
+-- Dumping data for table miu.model_has_permissions: ~0 rows (approximately)
 DELETE FROM `model_has_permissions`;
 
--- Dumping structure for table db_membership.model_has_roles
+-- Dumping structure for table miu.model_has_roles
 CREATE TABLE IF NOT EXISTS `model_has_roles` (
   `role_id` bigint unsigned NOT NULL,
-  `model_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `model_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `model_id` bigint unsigned NOT NULL,
   PRIMARY KEY (`role_id`,`model_id`,`model_type`),
   KEY `model_has_roles_model_id_model_type_index` (`model_id`,`model_type`),
   CONSTRAINT `model_has_roles_role_id_foreign` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table db_membership.model_has_roles: ~1 rows (approximately)
+-- Dumping data for table miu.model_has_roles: ~7 rows (approximately)
 DELETE FROM `model_has_roles`;
 INSERT INTO `model_has_roles` (`role_id`, `model_type`, `model_id`) VALUES
 	(1, 'App\\Models\\User', 1),
-	(2, 'App\\Models\\User', 2);
+	(2, 'App\\Models\\User', 2),
+	(2, 'App\\Models\\User', 3),
+	(2, 'App\\Models\\User', 4),
+	(1, 'App\\Models\\User', 5),
+	(1, 'App\\Models\\User', 6),
+	(1, 'App\\Models\\User', 7);
 
--- Dumping structure for table db_membership.password_resets
+-- Dumping structure for table miu.password_resets
 CREATE TABLE IF NOT EXISTS `password_resets` (
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   KEY `password_resets_email_index` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table db_membership.password_resets: ~0 rows (approximately)
+-- Dumping data for table miu.password_resets: ~0 rows (approximately)
 DELETE FROM `password_resets`;
 
--- Dumping structure for table db_membership.penyewaans
+-- Dumping structure for table miu.penyewaans
 CREATE TABLE IF NOT EXISTS `penyewaans` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `sewa_id` bigint unsigned NOT NULL,
   `user_id` bigint unsigned DEFAULT NULL,
   `qty` int NOT NULL DEFAULT '1',
-  `metode` enum('cash','debit','transfer','credit','qr','tap') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `metode` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `jumlah` int NOT NULL,
-  `keterangan` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `keterangan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `start_time` time DEFAULT NULL,
   `end_time` time DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -386,21 +379,21 @@ CREATE TABLE IF NOT EXISTS `penyewaans` (
   CONSTRAINT `penyewaans_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table db_membership.penyewaans: ~11 rows (approximately)
+-- Dumping data for table miu.penyewaans: ~0 rows (approximately)
 DELETE FROM `penyewaans`;
 
--- Dumping structure for table db_membership.permissions
+-- Dumping structure for table miu.permissions
 CREATE TABLE IF NOT EXISTS `permissions` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `guard_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `guard_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `permissions_name_guard_name_unique` (`name`,`guard_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table db_membership.permissions: ~15 rows (approximately)
+-- Dumping data for table miu.permissions: ~15 rows (approximately)
 DELETE FROM `permissions`;
 INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES
 	(1, 'master-access', 'web', '2026-01-30 07:32:23', '2026-01-30 07:32:23'),
@@ -419,14 +412,14 @@ INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at
 	(14, 'topup-delete', 'web', '2026-01-30 07:32:23', '2026-01-30 07:32:23'),
 	(15, 'management-access', 'web', '2026-01-30 07:32:23', '2026-01-30 07:32:23');
 
--- Dumping structure for table db_membership.personal_access_tokens
+-- Dumping structure for table miu.personal_access_tokens
 CREATE TABLE IF NOT EXISTS `personal_access_tokens` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `tokenable_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tokenable_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `tokenable_id` bigint unsigned NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `token` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `abilities` text COLLATE utf8mb4_unicode_ci,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `abilities` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `last_used_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -435,27 +428,27 @@ CREATE TABLE IF NOT EXISTS `personal_access_tokens` (
   KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table db_membership.personal_access_tokens: ~0 rows (approximately)
+-- Dumping data for table miu.personal_access_tokens: ~0 rows (approximately)
 DELETE FROM `personal_access_tokens`;
 
--- Dumping structure for table db_membership.roles
+-- Dumping structure for table miu.roles
 CREATE TABLE IF NOT EXISTS `roles` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `guard_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `guard_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `roles_name_guard_name_unique` (`name`,`guard_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table db_membership.roles: ~2 rows (approximately)
+-- Dumping data for table miu.roles: ~2 rows (approximately)
 DELETE FROM `roles`;
 INSERT INTO `roles` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES
 	(1, 'Admin', 'web', '2026-01-30 07:32:23', '2026-01-30 07:32:23'),
 	(2, 'Kasir', 'web', '2026-01-30 08:29:18', '2026-01-30 08:29:18');
 
--- Dumping structure for table db_membership.role_has_permissions
+-- Dumping structure for table miu.role_has_permissions
 CREATE TABLE IF NOT EXISTS `role_has_permissions` (
   `permission_id` bigint unsigned NOT NULL,
   `role_id` bigint unsigned NOT NULL,
@@ -465,7 +458,7 @@ CREATE TABLE IF NOT EXISTS `role_has_permissions` (
   CONSTRAINT `role_has_permissions_role_id_foreign` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table db_membership.role_has_permissions: ~19 rows (approximately)
+-- Dumping data for table miu.role_has_permissions: ~21 rows (approximately)
 DELETE FROM `role_has_permissions`;
 INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
 	(1, 1),
@@ -486,79 +479,117 @@ INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
 	(3, 2),
 	(4, 2),
 	(5, 2),
-	(6, 2);
+	(6, 2),
+	(9, 2),
+	(10, 2);
 
--- Dumping structure for table db_membership.settings
+-- Dumping structure for table miu.settings
 CREATE TABLE IF NOT EXISTS `settings` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `key` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `value` text COLLATE utf8mb4_unicode_ci,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `logo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ucapan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `deskripsi` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ppn` int DEFAULT NULL,
+  `member_reminder_days` int NOT NULL DEFAULT '7',
+  `member_delete_grace_days` int NOT NULL DEFAULT '0',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
+  `use_logo` int NOT NULL DEFAULT '1',
+  `print_mode` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'per_qty',
+  `dashboard_metric_mode` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'amount',
+  `whatsapp_enabled` tinyint(1) NOT NULL DEFAULT '0',
+  `key` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `value` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`id`),
   UNIQUE KEY `key` (`key`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table db_membership.settings: ~12 rows (approximately)
+-- Dumping data for table miu.settings: ~22 rows (approximately)
 DELETE FROM `settings`;
-INSERT INTO `settings` (`id`, `key`, `value`, `created_at`, `updated_at`) VALUES
-	(1, 'name', 'ANWA PURI RESIDENCE SPORT CLUB', '2026-02-24 04:50:44', '2026-02-24 07:08:31'),
-	(2, 'logo', 'logo/260224020831164.png', '2026-02-24 04:50:44', '2026-02-24 07:08:31'),
-	(3, 'ucapan', 'Terima Kasih', '2026-02-24 04:50:44', '2026-02-24 04:50:44'),
-	(4, 'deskripsi', 'IG WA', '2026-02-24 04:50:44', '2026-02-27 06:34:24'),
-	(5, 'ppn', '0', '2026-02-24 04:50:44', '2026-02-24 04:50:44'),
-	(8, 'print_mode', 'per_ticket', '2026-02-24 04:50:44', '2026-02-24 09:09:11'),
-	(9, 'dashboard_metric_mode', 'count', '2026-02-24 04:50:44', '2026-02-24 07:22:49'),
-	(10, 'whatsapp_enabled', '0', '2026-02-24 04:50:44', '2026-02-24 04:50:44'),
-	(11, 'use_logo', '1', '2026-02-24 04:50:44', '2026-02-24 07:08:31'),
-	(12, 'member_suspend_before_days', '7', '2026-02-24 04:53:19', '2026-02-24 04:53:19'),
-	(13, 'member_suspend_after_days', '30', '2026-02-24 04:53:19', '2026-02-24 04:53:19'),
-	(15, 'ticket_print_orientation', 'landscape', '2026-02-24 08:20:13', '2026-02-24 09:10:35'),
-	(16, 'member_reactivation_admin_fee', '2500', '2026-02-25 08:54:45', '2026-02-25 08:55:23');
+INSERT INTO `settings` (`id`, `name`, `logo`, `ucapan`, `deskripsi`, `ppn`, `member_reminder_days`, `member_delete_grace_days`, `created_at`, `updated_at`, `use_logo`, `print_mode`, `dashboard_metric_mode`, `whatsapp_enabled`, `key`, `value`) VALUES
+	(1, 'ANWA PURI RESIDENCE SPORT CLUB', 'logo/260216042041133.png', 'Terima kasih atas kunjungan anda', 'WA: 0812xxxx | IG: @sportclub_id', 0, 7, 0, NULL, '2026-02-20 07:24:21', 1, 'per_ticket', 'count', 0, '', NULL),
+	(2, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-02-26 04:22:44', '2026-02-26 04:22:44', 1, 'per_qty', 'amount', 0, 'name', 'ANWA PURI RESIDENCE SPORT CLUB'),
+	(3, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-02-26 04:22:44', '2026-02-26 04:22:44', 1, 'per_qty', 'amount', 0, 'ucapan', 'Terima kasih atas kunjungan anda'),
+	(4, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-02-26 04:22:44', '2026-03-03 11:40:20', 1, 'per_qty', 'amount', 0, 'deskripsi', 'WA: 0821-2222-9358 | IG: @SPORTCLUBANWAPURI'),
+	(5, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-02-26 04:22:44', '2026-02-26 04:22:55', 1, 'per_qty', 'amount', 0, 'ppn', '10'),
+	(6, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-02-26 04:22:44', '2026-02-26 04:22:44', 1, 'per_qty', 'amount', 0, 'member_suspend_before_days', '7'),
+	(7, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-02-26 04:22:44', '2026-02-26 08:22:23', 1, 'per_qty', 'amount', 0, 'member_suspend_after_days', '30'),
+	(8, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-02-26 04:22:44', '2026-02-26 04:22:51', 1, 'per_qty', 'amount', 0, 'member_reactivation_admin_fee', '2500'),
+	(9, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-02-26 04:22:44', '2026-03-03 09:33:17', 1, 'per_qty', 'amount', 0, 'print_mode', 'per_ticket'),
+	(10, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-02-26 04:22:44', '2026-03-06 06:28:53', 1, 'per_qty', 'amount', 0, 'ticket_print_orientation', 'with_summary'),
+	(11, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-02-26 04:22:44', '2026-02-26 08:22:11', 1, 'per_qty', 'amount', 0, 'dashboard_metric_mode', 'count'),
+	(12, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-02-26 04:22:44', '2026-02-26 08:51:37', 1, 'per_qty', 'amount', 0, 'use_logo', '1'),
+	(13, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-02-26 04:22:44', '2026-02-26 04:22:44', 1, 'per_qty', 'amount', 0, 'whatsapp_enabled', '0'),
+	(14, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-02-26 04:22:44', '2026-02-26 08:51:37', 1, 'per_qty', 'amount', 0, 'logo', 'logo/260226155137829.png'),
+	(15, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-03-03 09:16:09', '2026-03-03 09:16:09', 1, 'per_qty', 'amount', 0, 'renewal_notice_club_name', 'Sport Club Anwa Puri'),
+	(16, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-03-03 09:16:09', '2026-03-03 09:16:09', 1, 'per_qty', 'amount', 0, 'renewal_notice_bank_account', 'TRANSFER BANK: BCA 0289011155 A/N PT KARTUNINDO PERKASA ABADI'),
+	(17, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-03-03 09:16:09', '2026-03-03 09:16:09', 1, 'per_qty', 'amount', 0, 'renewal_notice_admin_phone', '0821 2222 9358'),
+	(18, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-03-03 09:16:09', '2026-03-03 09:16:09', 1, 'per_qty', 'amount', 0, 'renewal_notice_body_template', 'Yth. Bapak/Ibu :member_name,\r\n\r\nKami informasikan bahwa masa aktif membership Anda akan berakhir pada :expired_date.\r\n\r\nAgar tetap dapat menikmati seluruh fasilitas, mohon melakukan perpanjangan dengan rincian:\r\n\r\nTipe Member: :membership_name\r\nBiaya: :total_price\r\nJatuh tempo: :due_date\r\n:note_block\r\nSilakan melakukan pembayaran sebelum jatuh tempo agar membership tetap aktif.\r\n\r\n:bank_account\r\n\r\nJika sudah melakukan pembayaran, harap informasi dan kirim bukti pembayaran ke nomor Admin.\r\nTerima kasih.\r\n\r\nAdmin\r\n:club_name\r\nNo.Hp: :admin_phone'),
+	(19, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-03-06 06:19:32', '2026-03-06 06:30:58', 1, 'per_qty', 'amount', 0, 'ticket_code_mode', 'shared'),
+	(20, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-03-13 06:26:34', '2026-03-13 06:33:50', 1, 'per_qty', 'amount', 0, 'website_status', '1'),
+	(21, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-03-13 07:01:42', '2026-03-13 07:01:42', 1, 'per_qty', 'amount', 0, 'ticket_valid_days', '1'),
+	(22, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-03-13 07:01:42', '2026-03-13 07:01:42', 1, 'per_qty', 'amount', 0, 'ticket_scan_limit', '5');
 
--- Dumping structure for table db_membership.settings_legacy
+-- Dumping structure for table miu.settings_legacy
 CREATE TABLE IF NOT EXISTS `settings_legacy` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `key` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `value` text COLLATE utf8mb4_unicode_ci,
+  `key` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `value` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `key` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table db_membership.settings_legacy: ~0 rows (approximately)
+-- Dumping data for table miu.settings_legacy: ~0 rows (approximately)
 DELETE FROM `settings_legacy`;
 
--- Dumping structure for table db_membership.sewa
+-- Dumping structure for table miu.sewa
 CREATE TABLE IF NOT EXISTS `sewa` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `harga` int NOT NULL,
-  `is_nominal_flexible` tinyint(1) NOT NULL DEFAULT '0',
   `device` int NOT NULL,
   `use_time` tinyint(1) NOT NULL DEFAULT '1',
-  `print_qr` tinyint(1) NOT NULL DEFAULT '0',
   `use_ppn` tinyint(1) NOT NULL DEFAULT '0',
   `ppn` decimal(12,2) NOT NULL DEFAULT '0.00',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
+  `is_nominal_flexible` tinyint(1) NOT NULL DEFAULT '0',
+  `print_qr` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table db_membership.sewa: ~5 rows (approximately)
+-- Dumping data for table miu.sewa: ~21 rows (approximately)
 DELETE FROM `sewa`;
-INSERT INTO `sewa` (`id`, `name`, `harga`, `is_nominal_flexible`, `device`, `use_time`, `print_qr`, `use_ppn`, `ppn`, `created_at`, `updated_at`) VALUES
-	(1, 'Sewa Ban', 10000, 1, 1, 0, 0, 0, 0.00, '2026-01-30 07:32:23', '2026-02-27 05:56:03'),
-	(2, 'Sewa Baju Renang', 10000, 1, 2, 0, 0, 0, 0.00, '2026-01-30 07:32:23', '2026-02-27 05:56:09'),
-	(3, 'Sewa Pelampung', 10000, 0, 3, 0, 0, 0, 0.00, '2026-01-30 07:32:23', '2026-01-30 07:32:23'),
-	(4, 'Sewa Tikar', 10000, 0, 4, 1, 0, 0, 0.00, '2026-01-30 07:32:23', '2026-02-10 05:03:23'),
-	(5, 'Spicy Classic Fried Rice', 500000, 0, 3232, 0, 0, 0, 0.00, '2026-02-10 05:02:00', '2026-02-10 05:02:09');
+INSERT INTO `sewa` (`id`, `name`, `harga`, `device`, `use_time`, `use_ppn`, `ppn`, `created_at`, `updated_at`, `is_nominal_flexible`, `print_qr`) VALUES
+	(1, 'Sewa Loker Renang', 20000, 1, 0, 0, 0.00, '2026-01-30 07:32:23', '2026-03-04 00:17:22', 0, 0),
+	(5, 'Sewa Gazebo 1 (2 Jam)', 100000, 1, 1, 0, 0.00, '2026-02-20 08:41:11', '2026-03-04 00:18:15', 0, 0),
+	(6, 'Sewa Gazebo 2 (2 jam)', 100000, 1, 1, 0, 0.00, '2026-02-27 03:45:46', '2026-03-04 00:19:11', 0, 0),
+	(7, 'Sewa Gazebo 3 (2 jam)', 100000, 1, 1, 0, 0.00, '2026-03-03 10:37:05', '2026-03-04 00:21:26', 0, 0),
+	(8, 'Sewa Gazebo 4 (2 Jam)', 100000, 1, 1, 0, 0.00, '2026-03-04 00:03:02', '2026-03-04 00:21:33', 0, 0),
+	(9, 'Penambahan Gazebo (1 jam)', 50000, 1, 1, 0, 0.00, '2026-03-04 00:03:44', '2026-03-04 00:21:15', 0, 0),
+	(10, 'Lampu Tennis', 30000, 1, 0, 0, 0.00, '2026-03-04 00:04:07', '2026-03-04 02:10:14', 0, 0),
+	(11, 'Shower Tennis', 30000, 1, 0, 0, 0.00, '2026-03-04 00:13:57', '2026-03-04 02:10:19', 0, 0),
+	(12, 'Shower + Loker Tennis', 50000, 1, 0, 0, 0.00, '2026-03-04 00:22:51', '2026-03-04 00:22:51', 0, 0),
+	(13, 'Tennis AYO', 0, 1, 0, 0, 0.00, '2026-03-04 00:23:13', '2026-03-04 00:23:13', 1, 0),
+	(14, 'Loker Tennis', 30000, 1, 0, 0, 0.00, '2026-03-04 00:28:01', '2026-03-04 02:10:27', 0, 0),
+	(15, 'IMPACT (4x Visit)', 700000, 1, 0, 0, 0.00, '2026-03-04 01:26:02', '2026-03-04 01:26:02', 0, 0),
+	(16, 'IMPACT (8x Visit)', 1300000, 1, 0, 0, 0.00, '2026-03-04 01:26:39', '2026-03-04 01:26:39', 0, 0),
+	(17, 'Paket Manula', 350000, 1, 0, 0, 0.00, '2026-03-04 01:28:27', '2026-03-04 01:28:27', 0, 0),
+	(18, 'Listrik', 0, 1, 0, 0, 0.00, '2026-03-04 01:30:56', '2026-03-04 01:30:56', 1, 0),
+	(19, 'Denda Tenant', 25000, 1, 0, 0, 0.00, '2026-03-04 01:31:25', '2026-03-04 01:31:25', 1, 0),
+	(20, 'Foodcourt Kecil', 1210000, 1, 0, 0, 0.00, '2026-03-04 01:32:23', '2026-03-04 01:32:23', 0, 0),
+	(21, 'Foodcourt Sedang', 1450000, 1, 0, 0, 0.00, '2026-03-04 01:33:11', '2026-03-04 01:33:11', 0, 0),
+	(22, 'Foodcourt Besar', 2090000, 1, 0, 0, 0.00, '2026-03-04 01:34:19', '2026-03-04 01:34:19', 0, 0),
+	(23, 'Sampah Foodcourt', 50000, 1, 0, 0, 0.00, '2026-03-04 01:35:24', '2026-03-04 01:36:33', 1, 0),
+	(24, 'Lain - Lain', 0, 1, 0, 0, 0.00, '2026-03-04 01:37:01', '2026-03-04 01:37:01', 1, 0);
 
--- Dumping structure for table db_membership.terusans
+-- Dumping structure for table miu.terusans
 CREATE TABLE IF NOT EXISTS `terusans` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `tripod` int NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -566,10 +597,10 @@ CREATE TABLE IF NOT EXISTS `terusans` (
   UNIQUE KEY `terusans_tripod_unique` (`tripod`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table db_membership.terusans: ~0 rows (approximately)
+-- Dumping data for table miu.terusans: ~0 rows (approximately)
 DELETE FROM `terusans`;
 
--- Dumping structure for table db_membership.terusan_ticket
+-- Dumping structure for table miu.terusan_ticket
 CREATE TABLE IF NOT EXISTS `terusan_ticket` (
   `terusan_id` bigint unsigned NOT NULL,
   `ticket_id` bigint unsigned NOT NULL,
@@ -579,14 +610,14 @@ CREATE TABLE IF NOT EXISTS `terusan_ticket` (
   CONSTRAINT `terusan_ticket_ticket_id_foreign` FOREIGN KEY (`ticket_id`) REFERENCES `tickets` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table db_membership.terusan_ticket: ~0 rows (approximately)
+-- Dumping data for table miu.terusan_ticket: ~0 rows (approximately)
 DELETE FROM `terusan_ticket`;
 
--- Dumping structure for table db_membership.tickets
+-- Dumping structure for table miu.tickets
 CREATE TABLE IF NOT EXISTS `tickets` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `jenis_ticket_id` bigint unsigned NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `harga` int NOT NULL,
   `tripod` int NOT NULL,
   `use_ppn` tinyint(1) NOT NULL DEFAULT '0',
@@ -596,18 +627,29 @@ CREATE TABLE IF NOT EXISTS `tickets` (
   PRIMARY KEY (`id`),
   KEY `tickets_jenis_ticket_id_foreign` (`jenis_ticket_id`),
   CONSTRAINT `tickets_jenis_ticket_id_foreign` FOREIGN KEY (`jenis_ticket_id`) REFERENCES `jenis_tickets` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table db_membership.tickets: ~5 rows (approximately)
+-- Dumping data for table miu.tickets: ~16 rows (approximately)
 DELETE FROM `tickets`;
 INSERT INTO `tickets` (`id`, `jenis_ticket_id`, `name`, `harga`, `tripod`, `use_ppn`, `ppn`, `created_at`, `updated_at`) VALUES
-	(1, 1, 'HTM Reguler Weekday', 20000, 1, 0, 0.00, '2026-01-30 07:32:23', '2026-01-30 07:46:46'),
-	(2, 1, 'HTM Reguler Weekend', 30000, 2, 0, 0.00, '2026-01-30 07:32:23', '2026-01-30 07:32:23'),
-	(3, 1, 'HTM Terusan Weekday', 40000, 3, 0, 0.00, '2026-01-30 07:32:23', '2026-01-30 07:32:23'),
-	(4, 1, 'HTM Terusan Weekend', 50000, 4, 0, 0.00, '2026-01-30 07:32:23', '2026-01-30 07:32:23'),
-	(5, 1, 'HTM Promo Pelajar', 15000, 1, 0, 0.00, '2026-01-30 08:34:18', '2026-01-30 08:34:31');
+	(6, 1, 'Semua Fasilitas Weekday', 75000, 1, 0, 0.00, '2026-02-03 07:19:24', '2026-02-20 04:22:38'),
+	(7, 1, 'Semua Fasilitas Weekend', 85000, 1, 0, 0.00, '2026-02-03 07:20:11', '2026-02-03 07:20:11'),
+	(8, 1, 'Tiket Renang Weekday', 45000, 1, 0, 0.00, '2026-02-03 07:21:41', '2026-02-03 07:21:41'),
+	(9, 1, 'Tiket Renang Weekend', 60000, 1, 0, 0.00, '2026-02-03 07:21:57', '2026-02-03 07:21:57'),
+	(13, 1, 'Sewa Loker', 20000, 1, 0, 0.00, '2026-02-03 07:32:04', '2026-02-03 07:32:04'),
+	(14, 1, 'Sewa Gazebo (2 Jam)', 100000, 1, 0, 0.00, '2026-02-03 07:32:34', '2026-02-03 07:32:34'),
+	(15, 1, 'Sewa Gazebo (1 Jam)', 50000, 1, 0, 0.00, '2026-02-03 07:32:52', '2026-02-03 07:32:52'),
+	(17, 1, 'Voucher Renang', 35000, 1, 0, 0.00, '2026-02-03 07:35:40', '2026-02-03 07:35:40'),
+	(18, 1, 'Only Pingpong (Weekday)', 45000, 1, 0, 0.00, '2026-02-03 07:44:58', '2026-02-03 07:44:58'),
+	(19, 1, 'Only Pingpong (Weekend)', 60000, 1, 0, 0.00, '2026-02-03 07:45:28', '2026-02-03 07:45:28'),
+	(20, 1, 'IMPACT (4x Visit)', 700000, 1, 0, 0.00, '2026-02-03 07:46:05', '2026-02-03 07:46:05'),
+	(21, 1, 'IMPACT (8x Visit)', 1300000, 1, 0, 0.00, '2026-02-03 07:46:38', '2026-02-03 07:46:38'),
+	(22, 1, 'Tiket Rombongan (Weekday)', 35000, 1, 0, 0.00, '2026-02-03 07:47:37', '2026-02-03 07:47:37'),
+	(23, 1, 'PROMO RAMADHAN 19 FEB - 6 MAR', 35000, 1, 0, 0.00, '2026-03-03 11:45:28', '2026-03-03 11:45:28'),
+	(24, 1, 'Paket Manula', 350000, 1, 0, 0.00, '2026-03-04 01:39:28', '2026-03-04 01:39:28'),
+	(25, 1, 'Tiket Lebaran', 75000, 1, 0, 0.00, '2026-03-04 01:40:06', '2026-03-04 01:40:06');
 
--- Dumping structure for table db_membership.topups
+-- Dumping structure for table miu.topups
 CREATE TABLE IF NOT EXISTS `topups` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `member_id` bigint unsigned NOT NULL,
@@ -619,29 +661,26 @@ CREATE TABLE IF NOT EXISTS `topups` (
   CONSTRAINT `topups_member_id_foreign` FOREIGN KEY (`member_id`) REFERENCES `members` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table db_membership.topups: ~0 rows (approximately)
+-- Dumping data for table miu.topups: ~0 rows (approximately)
 DELETE FROM `topups`;
 
--- Dumping structure for table db_membership.transactions
+-- Dumping structure for table miu.transactions
 CREATE TABLE IF NOT EXISTS `transactions` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `ticket_id` bigint unsigned DEFAULT '0',
   `member_id` bigint unsigned DEFAULT NULL,
-  `member_info` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `member_info` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `user_id` bigint unsigned NOT NULL,
   `no_trx` int NOT NULL,
-  `ticket_code` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `transaction_type` enum('renewal','ticket','registration','rental') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'ticket',
-  `tipe` enum('group','individual') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'group',
+  `ticket_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `transaction_type` enum('renewal','ticket','registration','rental') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'ticket',
+  `tipe` enum('group','individual') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'group',
   `amount` int NOT NULL DEFAULT '0',
   `disc` int NOT NULL DEFAULT '0',
-  `metode` enum('cash','debit','kredit','qris','transfer') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `nama_kartu` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `no_kartu` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `bank` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `metode` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `discount` int NOT NULL DEFAULT '0',
   `amount_scanned` int NOT NULL DEFAULT '0',
-  `status` enum('open','closed') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'open',
+  `status` enum('open','closed') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'open',
   `gate` int DEFAULT NULL,
   `is_active` int NOT NULL DEFAULT '0',
   `ppn` decimal(12,2) NOT NULL DEFAULT '0.00',
@@ -651,49 +690,55 @@ CREATE TABLE IF NOT EXISTS `transactions` (
   `is_print` int DEFAULT '0',
   `bayar` double NOT NULL DEFAULT '0',
   `kembali` double NOT NULL DEFAULT '0',
+  `nama_kartu` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `no_kartu` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `bank` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `transactions_user_id_foreign` (`user_id`),
   CONSTRAINT `transactions_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table db_membership.transactions: ~59 rows (approximately)
+-- Dumping data for table miu.transactions: ~0 rows (approximately)
 DELETE FROM `transactions`;
-INSERT INTO `transactions` (`id`, `ticket_id`, `member_id`, `member_info`, `user_id`, `no_trx`, `ticket_code`, `transaction_type`, `tipe`, `amount`, `disc`, `metode`, `nama_kartu`, `no_kartu`, `bank`, `discount`, `amount_scanned`, `status`, `gate`, `is_active`, `ppn`, `admin_fee`, `created_at`, `updated_at`, `is_print`, `bayar`, `kembali`) VALUES
-	(1, 1, 21, 'Kino - 646564', 1, 1, 'REG/001', 'registration', 'individual', 1, 0, 'debit', NULL, NULL, NULL, 0, 0, 'open', NULL, 1, 0.00, 2500, '2026-02-27 06:31:27', '2026-02-27 06:31:27', 0, 150000, 0);
 
--- Dumping structure for table db_membership.users
+-- Dumping structure for table miu.users
 CREATE TABLE IF NOT EXISTS `users` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `username` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `foto` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `foto` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `uid` char(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `uid` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `is_active` int DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_username_unique` (`username`),
   UNIQUE KEY `users_uid_unique` (`uid`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table db_membership.users: ~1 rows (approximately)
+-- Dumping data for table miu.users: ~7 rows (approximately)
 DELETE FROM `users`;
 INSERT INTO `users` (`id`, `name`, `username`, `password`, `foto`, `created_at`, `updated_at`, `uid`, `is_active`) VALUES
 	(1, 'Super Admin', 'superadmin', '$2y$10$sswDhoSF0XL0ePqzbGcZJOHuLzwe5TezY5l9DYQvXPzdR2iB79EaK', NULL, '2026-01-30 07:32:23', '2026-01-30 08:26:42', NULL, 1),
-	(2, 'Dapur Nusantara', 'rahmawnj', '$2y$10$PiYxGR/REzX1dJHsG74QkOQTOiXQXAewCFhL9b/kMyNvlz81n4qhe', NULL, '2026-02-24 02:40:44', '2026-02-24 02:40:44', '08543212', 1);
+	(2, 'DIVA', 'DIVA', '$2y$10$mcPSv/7mCO010Go3kGJFOuarb53PATgaMeZi.pOzhe/FCdQkV9eVa', NULL, '2026-02-03 07:07:22', '2026-02-03 07:10:00', NULL, 1),
+	(3, 'KEVIN', 'KEVIN', '$2y$10$2C7obZUng.O47ULQdZpxBO3hQHiOS4CxQC2p0UFHe3En4c2UCnIr.', NULL, '2026-02-03 07:07:47', '2026-02-03 07:07:47', NULL, 1),
+	(4, 'MAYA', 'MAYA', '$2y$10$A/ZMIBDvb1Z7nFynj7pfYetRXQFzjtdGR/laSgkfb.MghuY.N1A3.', NULL, '2026-02-03 07:08:14', '2026-03-04 02:14:36', NULL, 1),
+	(5, 'MULI', 'MULI', '$2y$10$u9cxNuvO57mREpFBdK4NlumQeOluvkvTF/skXYJ4/U4/41N50fXSy', NULL, '2026-02-03 07:15:49', '2026-03-04 02:04:13', NULL, 1),
+	(6, 'HERNIE', 'HERNIE', '$2y$10$vM5u5YelgUUGJig/ktVaauElUq9/rIZkKf/A4dHasLabvp1Mlub..', NULL, '2026-02-03 07:16:11', '2026-02-03 07:16:11', NULL, 1),
+	(7, 'Vicky', 'vicky', '$2y$10$WbJO3FUzoNnFmtLK15s3.u6qyMXb/BqMh1uURGG1yxq1e8aNbttt2', NULL, '2026-02-20 07:13:46', '2026-02-20 07:13:46', NULL, 1);
 
--- Dumping structure for table db_membership.whatsapp_notification_logs
+-- Dumping structure for table miu.whatsapp_notification_logs
 CREATE TABLE IF NOT EXISTS `whatsapp_notification_logs` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `type` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'renewal_reminder, invoice',
+  `type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'renewal_reminder, invoice',
   `member_id` bigint unsigned DEFAULT NULL,
   `transaction_id` bigint unsigned DEFAULT NULL,
-  `recipient_phone` varchar(25) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `message` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `status` enum('pending','sent','failed') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `recipient_phone` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `message` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` enum('pending','sent','failed') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
   `retry_count` smallint unsigned NOT NULL DEFAULT '0',
-  `provider_response` text COLLATE utf8mb4_unicode_ci,
+  `provider_response` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `sent_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -705,7 +750,7 @@ CREATE TABLE IF NOT EXISTS `whatsapp_notification_logs` (
   KEY `idx_wa_logs_sent_at` (`sent_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table db_membership.whatsapp_notification_logs: ~5 rows (approximately)
+-- Dumping data for table miu.whatsapp_notification_logs: ~0 rows (approximately)
 DELETE FROM `whatsapp_notification_logs`;
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
