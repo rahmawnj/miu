@@ -28,7 +28,7 @@
         <div class="login login-with-news-feed">
             <!-- BEGIN news-feed -->
             <div class="news-feed">
-                <div class="news-image" style="background-image: url({{ asset('/') }}img/login-bg/login-bg.png)"></div>
+                <div class="news-image" style="background-image: url({{ asset('/') }}img/login-bg/login-bg-water.jpg)"></div>
                 <div class="news-caption">
                     <!-- <h4 class="caption-title"><b>E</b>Ticket</h4> -->
                 </div>

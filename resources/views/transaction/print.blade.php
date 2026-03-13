@@ -102,6 +102,8 @@
         $cardNumber = trim((string) ($transaction->no_kartu ?? ''));
         $bankName = trim((string) ($transaction->bank ?? ''));
         $printTickets = $tickets;
+        $ticketScanLimit = (int) \App\Models\Setting::valueOf('ticket_scan_limit', 0);
+        $ticketScanLimitLabel = $ticketScanLimit > 0 ? ($ticketScanLimit . ' kali') : 'Tidak dibatasi';
     @endphp
 
     @if($shouldPrintSummary)
@@ -201,6 +203,7 @@
                 <span style="display: block; text-align: center; font-size: 8pt;">Tanggal: {{ $transactionDateLabel }}</span>
                 <span style="display: block; text-align: center; font-size: 8pt;">Pembayaran: {{ $paymentLabel }}</span>
                 <span style="display: block; text-align: center; font-size: 8pt;">Kasir: {{ $kasirName }}</span>
+                <span style="display: block; text-align: center; font-size: 8pt;">Batas Scan: {{ $ticketScanLimitLabel }}</span>
                 @if($cardName !== '' || $cardNumber !== '' || $bankName !== '')
                     @if($cardName !== '')
                     <span style="display: block; text-align: center; font-size: 7.5pt;">Nama Kartu: {{ $cardName }}</span>
