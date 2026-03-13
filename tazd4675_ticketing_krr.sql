@@ -667,10 +667,10 @@ CREATE TABLE `settings` (
 --
 
 INSERT INTO `settings` (`id`, `name`, `logo`, `ucapan`, `deskripsi`, `ppn`, `member_reminder_days`, `member_delete_grace_days`, `created_at`, `updated_at`, `use_logo`, `print_mode`, `dashboard_metric_mode`, `whatsapp_enabled`, `key`, `value`) VALUES
-(1, 'ANWA PURI RESIDENCE SPORT CLUB', 'logo/260216042041133.png', 'Terima kasih atas kunjungan anda', 'WA: 0812xxxx | IG: @sportclub_id', 0, 7, 0, NULL, '2026-02-20 07:24:21', 1, 'per_ticket', 'count', 0, '', NULL),
-(2, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-02-26 04:22:44', '2026-02-26 04:22:44', 1, 'per_qty', 'amount', 0, 'name', 'ANWA PURI RESIDENCE SPORT CLUB'),
+(1, 'MIU', 'logo/260216042041133.png', 'Terima kasih atas kunjungan anda', 'WA: 0812xxxx | IG: @sportclub_id', 0, 7, 0, NULL, '2026-02-20 07:24:21', 1, 'per_ticket', 'count', 0, '', NULL),
+(2, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-02-26 04:22:44', '2026-02-26 04:22:44', 1, 'per_qty', 'amount', 0, 'name', 'MIU'),
 (3, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-02-26 04:22:44', '2026-02-26 04:22:44', 1, 'per_qty', 'amount', 0, 'ucapan', 'Terima kasih atas kunjungan anda'),
-(4, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-02-26 04:22:44', '2026-03-03 11:40:20', 1, 'per_qty', 'amount', 0, 'deskripsi', 'WA: 0821-2222-9358 | IG: @SPORTCLUBANWAPURI'),
+(4, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-02-26 04:22:44', '2026-03-03 11:40:20', 1, 'per_qty', 'amount', 0, 'deskripsi', 'WA: 0821-2222-9358 | IG: @MIU'),
 (5, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-02-26 04:22:44', '2026-02-26 04:22:55', 1, 'per_qty', 'amount', 0, 'ppn', '10'),
 (6, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-02-26 04:22:44', '2026-02-26 04:22:44', 1, 'per_qty', 'amount', 0, 'member_suspend_before_days', '7'),
 (7, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-02-26 04:22:44', '2026-02-26 08:22:23', 1, 'per_qty', 'amount', 0, 'member_suspend_after_days', '30'),
@@ -681,7 +681,7 @@ INSERT INTO `settings` (`id`, `name`, `logo`, `ucapan`, `deskripsi`, `ppn`, `mem
 (12, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-02-26 04:22:44', '2026-02-26 08:51:37', 1, 'per_qty', 'amount', 0, 'use_logo', '1'),
 (13, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-02-26 04:22:44', '2026-02-26 04:22:44', 1, 'per_qty', 'amount', 0, 'whatsapp_enabled', '0'),
 (14, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-02-26 04:22:44', '2026-02-26 08:51:37', 1, 'per_qty', 'amount', 0, 'logo', 'logo/260226155137829.png'),
-(15, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-03-03 09:16:09', '2026-03-03 09:16:09', 1, 'per_qty', 'amount', 0, 'renewal_notice_club_name', 'Sport Club Anwa Puri'),
+(15, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-03-03 09:16:09', '2026-03-03 09:16:09', 1, 'per_qty', 'amount', 0, 'renewal_notice_club_name', 'MIU'),
 (16, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-03-03 09:16:09', '2026-03-03 09:16:09', 1, 'per_qty', 'amount', 0, 'renewal_notice_bank_account', 'TRANSFER BANK: BCA 0289011155 A/N PT KARTUNINDO PERKASA ABADI'),
 (17, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-03-03 09:16:09', '2026-03-03 09:16:09', 1, 'per_qty', 'amount', 0, 'renewal_notice_admin_phone', '0821 2222 9358'),
 (18, NULL, NULL, NULL, NULL, NULL, 7, 0, '2026-03-03 09:16:09', '2026-03-03 09:16:09', 1, 'per_qty', 'amount', 0, 'renewal_notice_body_template', 'Yth. Bapak/Ibu :member_name,\r\n\r\nKami informasikan bahwa masa aktif membership Anda akan berakhir pada :expired_date.\r\n\r\nAgar tetap dapat menikmati seluruh fasilitas, mohon melakukan perpanjangan dengan rincian:\r\n\r\nTipe Member: :membership_name\r\nBiaya: :total_price\r\nJatuh tempo: :due_date\r\n:note_block\r\nSilakan melakukan pembayaran sebelum jatuh tempo agar membership tetap aktif.\r\n\r\n:bank_account\r\n\r\nJika sudah melakukan pembayaran, harap informasi dan kirim bukti pembayaran ke nomor Admin.\r\nTerima kasih.\r\n\r\nAdmin\r\n:club_name\r\nNo.Hp: :admin_phone');
@@ -1438,3 +1438,4 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+

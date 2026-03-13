@@ -201,7 +201,7 @@
                             <div class="form-group mb-3">
                                 <label for="renewal_notice_club_name">Nama Club di Surat Reminder</label>
                                 <input type="text" name="renewal_notice_club_name" id="renewal_notice_club_name" class="form-control"
-                                       value="{{ old('renewal_notice_club_name', $setting->renewal_notice_club_name ?? 'Sport Club Anwa Puri') }}">
+                                       value="{{ old('renewal_notice_club_name', $setting->renewal_notice_club_name ?? 'MIU') }}">
                                 @error('renewal_notice_club_name') <small class="text-danger">{{ $message }}</small> @enderror
                             </div>
 
@@ -282,4 +282,5 @@
     });
 </script>
 @endpush
+
 

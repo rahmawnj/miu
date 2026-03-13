@@ -26,6 +26,7 @@
             border-radius: 20px;
             padding: 28px 30px;
             box-shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
+            text-align: center;
         }
         h2 {
             margin: 0 0 8px;
@@ -50,6 +51,7 @@
             display: grid;
             grid-template-columns: repeat(4, 64px);
             gap: 12px;
+            justify-content: center;
         }
         .pin-box {
             width: 64px;
@@ -98,7 +100,6 @@
             </div>
         </form>
 
-        <div class="hint">PIN disimpan di `.env` pada variabel `SECRET_SETTING_KEY`.</div>
     </div>
 
     <script>

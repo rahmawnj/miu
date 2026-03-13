@@ -27,6 +27,7 @@
             border-radius: 26px;
             padding: 32px 34px;
             box-shadow: 0 24px 80px rgba(15, 23, 42, 0.12);
+            text-align: center;
         }
         h2 {
             margin: 0 0 8px;
@@ -44,6 +45,7 @@
             align-items: center;
             gap: 18px;
             flex-wrap: wrap;
+            justify-content: center;
         }
         .toggle-label {
             font-weight: 600;
@@ -97,6 +99,7 @@
             display: flex;
             flex-direction: column;
             gap: 4px;
+            align-items: center;
         }
         .status-title {
             font-size: 16px;

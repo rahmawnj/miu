@@ -168,7 +168,7 @@
         @if ($shortDesc !== '')
             <div class="short-desc">{!! nl2br(e($shortDesc)) !!}</div>
         @endif
-        <div class="app-name-bottom">{{ $setting->name ?? 'ANWA' }}</div>
+        <div class="app-name-bottom">{{ $setting->name ?? 'MIU' }}</div>
     </div>
 
 
@@ -187,3 +187,4 @@
 </body>
 
 </html>
+

@@ -10,7 +10,7 @@ return new class extends Migration
         $now = now('Asia/Jakarta');
 
         $defaults = [
-            'renewal_notice_club_name' => 'Sport Club Anwa Puri',
+            'renewal_notice_club_name' => 'MIU',
             'renewal_notice_bank_account' => 'TRANSFER BANK: BCA 0289011155 A/N PT KARTUNINDO PERKASA ABADI',
             'renewal_notice_admin_phone' => '0821 2222 9358',
         ];
@@ -34,4 +34,5 @@ return new class extends Migration
             ->delete();
     }
 };
+
 

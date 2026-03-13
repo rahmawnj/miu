@@ -1175,7 +1175,7 @@ private function buildRenewalNoticeRows($members, int $suspendAfterDays): array
 private function renewalNoticeContent(): array
 {
     return [
-        'club_name' => (string) Setting::valueOf('renewal_notice_club_name', 'Sport Club Anwa Puri'),
+        'club_name' => (string) Setting::valueOf('renewal_notice_club_name', 'MIU'),
         'bank_account' => (string) Setting::valueOf('renewal_notice_bank_account', 'TRANSFER BANK: BCA 0289011155 A/N PT KARTUNINDO PERKASA ABADI'),
         'admin_phone' => (string) Setting::valueOf('renewal_notice_admin_phone', '0821 2222 9358'),
         'body_template' => (string) Setting::valueOf(
@@ -1519,3 +1519,4 @@ public function processBulkRenew(Request $request)
     }
 
 }
+

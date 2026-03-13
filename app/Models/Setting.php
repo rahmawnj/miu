@@ -28,7 +28,7 @@ class Setting extends Model
         'whatsapp_enabled' => 0,
         'use_logo' => 0,
         'website_status' => 1,
-        'renewal_notice_club_name' => 'Sport Club Anwa Puri',
+        'renewal_notice_club_name' => 'MIU',
         'renewal_notice_bank_account' => 'TRANSFER BANK: BCA 0289011155 A/N PT KARTUNINDO PERKASA ABADI',
         'renewal_notice_admin_phone' => '0821 2222 9358',
         'renewal_notice_body_template' => "Yth. Bapak/Ibu :member_name,\n\nKami informasikan bahwa masa aktif membership Anda akan berakhir pada :expired_date.\n\nAgar tetap dapat menikmati seluruh fasilitas, mohon melakukan perpanjangan dengan rincian:\n\nTipe Member: :membership_name\nBiaya: :total_price\nJatuh tempo: :due_date\n:note_block\nSilakan melakukan pembayaran sebelum jatuh tempo agar membership tetap aktif.\n\n:bank_account\n\nJika sudah melakukan pembayaran, harap informasi dan kirim bukti pembayaran ke nomor Admin.\nTerima kasih.\n\nAdmin\n:club_name\nNo.Hp: :admin_phone",
@@ -85,3 +85,4 @@ class Setting extends Model
         }
     }
 }
+
