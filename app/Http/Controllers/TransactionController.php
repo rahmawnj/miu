@@ -23,6 +23,7 @@ use Illuminate\Validation\Rule;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\Transaction\CreateTransactionRequest;
 use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class TransactionController extends Controller
 {
@@ -122,7 +123,19 @@ class TransactionController extends Controller
                 ->editColumn('action', function ($row) {
                     $buttons = [];
 
-                    if (!in_array($row->transaction_type, ['registration', 'renewal'])) {
+                    if ($row->transaction_type === 'ticket') {
+                        $previewUrl = route('transactions.print', $row->id) . '?auto_print=0&auto_redirect=0';
+                        $printUrl = route('transactions.print', $row->id);
+                        $pdfUrl = route('transactions.ticket.pdf', $row->id);
+
+                        $buttons[] = '<button type="button" class="btn btn-sm btn-primary btn-ticket-preview"'
+                            . ' data-preview-url="' . e($previewUrl) . '"'
+                            . ' data-print-url="' . e($printUrl) . '"'
+                            . ' data-pdf-url="' . e($pdfUrl) . '"'
+                            . ' title="Preview Ticket">'
+                            . '<i class="fas fa-print"></i>'
+                            . '</button>';
+                    } elseif (!in_array($row->transaction_type, ['registration', 'renewal'])) {
                         $buttons[] = '<a href="' . route("transactions.print", $row->id) . '" class="btn btn-sm btn-primary"><i class="fas fa-print"></i></a>';
                     }
 
@@ -262,19 +275,46 @@ class TransactionController extends Controller
         $scanLimit = (int) Setting::valueOf('ticket_scan_limit', 0);
         $details = $transaction->detail()->with('ticket')->get();
 
-        $rows = $details->map(function ($detail) use ($scanLimit) {
-            $qty = max((int) ($detail->qty ?? 0), 0);
-            $allowed = $scanLimit > 0 ? ($qty * $scanLimit) : $qty;
-            $scanned = max((int) ($detail->scanned ?? 0), 0);
+        $rows = collect();
+        $allowedPerPiece = $scanLimit > 0 ? $scanLimit : 1;
 
-            return [
-                'ticket_name' => (string) ($detail->ticket->name ?? '-'),
-                'qty' => $qty,
-                'allowed' => $allowed,
-                'scanned' => $scanned,
-                'remaining' => max($allowed - $scanned, 0),
-            ];
-        })->values();
+        foreach ($details as $detail) {
+            $qty = max((int) ($detail->qty ?? 0), 0);
+            $ticketName = (string) ($detail->ticket->name ?? '-');
+            $ticketCodeBase = trim((string) ($detail->ticket_code ?? ''));
+            $scannedRemaining = max((int) ($detail->scanned ?? 0), 0);
+
+            if ($qty <= 1) {
+                $pieceScanned = min($scannedRemaining, $allowedPerPiece);
+                $rows->push([
+                    'ticket_code' => $ticketCodeBase !== '' ? $ticketCodeBase : (string) $detail->id,
+                    'ticket_name' => $ticketName,
+                    'qty' => 1,
+                    'allowed' => $allowedPerPiece,
+                    'scanned' => $pieceScanned,
+                    'remaining' => max($allowedPerPiece - $pieceScanned, 0),
+                ]);
+                continue;
+            }
+
+            for ($piece = 1; $piece <= $qty; $piece++) {
+                $pieceScanned = min($scannedRemaining, $allowedPerPiece);
+                $scannedRemaining -= $pieceScanned;
+
+                $displayCode = $ticketCodeBase !== ''
+                    ? ($ticketCodeBase . '-' . $piece)
+                    : ($detail->id . '-' . $piece);
+
+                $rows->push([
+                    'ticket_code' => (string) $displayCode,
+                    'ticket_name' => $ticketName,
+                    'qty' => 1,
+                    'allowed' => $allowedPerPiece,
+                    'scanned' => $pieceScanned,
+                    'remaining' => max($allowedPerPiece - $pieceScanned, 0),
+                ]);
+            }
+        }
 
         return response()->json([
             'status' => 'success',
@@ -856,66 +896,131 @@ class TransactionController extends Controller
         return redirect()->route('penyewaan.print', $transaction->ticket_id);
     }
 
-    $setting = Setting::asObject();
-    $ticketCodeMode = in_array((string) ($setting->ticket_code_mode ?? 'unique'), ['shared', 'unique'], true)
-        ? (string) $setting->ticket_code_mode
-        : 'unique';
+    $payload = $this->buildTicketPrintPayload($transaction, false);
 
-    DB::transaction(function () use ($transaction, $ticketCodeMode) {
-        DetailTransaction::applyTicketCodeMode($transaction, $ticketCodeMode);
-    });
+    return view('transaction.print', $payload + ['isPdf' => false]);
+}
 
-    $transaction->load(['detail.ticket', 'user']);
-    $tickets = [];
-    if ($ticketCodeMode === 'unique') {
-        $tickets = $transaction->detail->map(function ($detail) {
-            return [
-                'name' => $detail->ticket->name ?? '-',
-                'harga' => number_format(((float) ($detail->total ?? 0)) + ((float) ($detail->ppn ?? 0)), 0, ',', '.'),
-                'ticket_code' => (string) ($detail->ticket_code ?? '-'),
-                'qty' => 1,
-            ];
-        })->values()->all();
-    } else {
-        foreach ($transaction->detail as $detail) {
-            $qty = max((int) ($detail->qty ?? 1), 1);
-            $lineSubtotal = ((float) ($detail->total ?? 0)) + ((float) ($detail->ppn ?? 0));
-            $lineUnitPrice = $qty > 0 ? ($lineSubtotal / $qty) : $lineSubtotal;
+    public function ticketPdf(Transaction $transaction)
+    {
+        if ($transaction->transaction_type !== 'ticket') {
+            abort(404);
+        }
 
-            for ($i = 1; $i <= $qty; $i++) {
-                $tickets[] = [
+        $payload = $this->buildTicketPrintPayload($transaction, true);
+        $ticketPrintModeRaw = (string) ($payload['ticketPrintOrientation'] ?? 'without_summary');
+        if ($ticketPrintModeRaw === 'portrait') {
+            $ticketPrintModeRaw = 'with_summary';
+        } elseif ($ticketPrintModeRaw === 'portrait_with_first_qr') {
+            $ticketPrintModeRaw = 'without_summary';
+        }
+
+        $shouldPrintSummary = $ticketPrintModeRaw === 'with_summary';
+        $ticketCount = max((int) count($payload['tickets'] ?? []), 1);
+        $rowCount = $ticketCount + ($shouldPrintSummary ? 1 : 0);
+        $height = max(900, 260 * $rowCount);
+
+        $pdf = Pdf::loadView('transaction.print', $payload + [
+            'isPdf' => true,
+            'autoPrint' => false,
+            'autoRedirect' => false,
+        ])->setPaper([0, 0, 226.77, $height]);
+
+        $ticketCode = (string) ($transaction->ticket_code ?? ('TRX-' . $transaction->id));
+        $safeCode = preg_replace('/[^A-Za-z0-9_\-]/', '-', $ticketCode);
+        $fileName = 'ticket-' . $safeCode . '.pdf';
+
+        return $pdf->download($fileName);
+    }
+
+    private function buildTicketPrintPayload(Transaction $transaction, bool $forPdf): array
+    {
+        $setting = Setting::asObject();
+        $ticketCodeMode = in_array((string) ($setting->ticket_code_mode ?? 'unique'), ['shared', 'unique'], true)
+            ? (string) $setting->ticket_code_mode
+            : 'unique';
+
+        DB::transaction(function () use ($transaction, $ticketCodeMode) {
+            DetailTransaction::applyTicketCodeMode($transaction, $ticketCodeMode);
+        });
+
+        $transaction->load(['detail.ticket', 'user']);
+        $tickets = [];
+        if ($ticketCodeMode === 'unique') {
+            $tickets = $transaction->detail->map(function ($detail) {
+                return [
                     'name' => $detail->ticket->name ?? '-',
-                    'harga' => number_format($lineUnitPrice, 0, ',', '.'),
+                    'harga' => number_format(((float) ($detail->total ?? 0)) + ((float) ($detail->ppn ?? 0)), 0, ',', '.'),
                     'ticket_code' => (string) ($detail->ticket_code ?? '-'),
-                    'qty' => $qty,
+                    'qty' => 1,
                 ];
+            })->values()->all();
+        } else {
+            foreach ($transaction->detail as $detail) {
+                $qty = max((int) ($detail->qty ?? 1), 1);
+                $lineSubtotal = ((float) ($detail->total ?? 0)) + ((float) ($detail->ppn ?? 0));
+                $lineUnitPrice = $qty > 0 ? ($lineSubtotal / $qty) : $lineSubtotal;
+
+                for ($i = 1; $i <= $qty; $i++) {
+                    $tickets[] = [
+                        'name' => $detail->ticket->name ?? '-',
+                        'harga' => number_format($lineUnitPrice, 0, ',', '.'),
+                        'ticket_code' => (string) ($detail->ticket_code ?? '-'),
+                        'qty' => $qty,
+                    ];
+                }
             }
         }
+
+        $logo = null;
+        if (!empty($setting->logo)) {
+            $logoPath = public_path('storage/' . $setting->logo);
+            if (is_file($logoPath)) {
+                $logo = $forPdf ? $this->encodeImageAsDataUri($logoPath) : asset('/storage/' . $setting->logo);
+            }
+        }
+
+        if ($logo === null) {
+            $fallbackLogoPath = public_path('/images/rio.png');
+            if (is_file($fallbackLogoPath)) {
+                $logo = $this->encodeImageAsDataUri($fallbackLogoPath);
+            }
+        }
+
+        $use = $logo !== null ? 1 : 0;
+        $name = $setting->name ?? 'Ticketing';
+        $ucapan = $setting->ucapan ?? 'Terima Kasih';
+        $deskripsi = $setting->deskripsi ?? 'qr code hanya berlaku satu kali';
+        $ppn = $setting->ppn ?? 0;
+        $print = 0;
+        $ticketPrintOrientation = $setting->ticket_print_orientation ?? 'without_summary';
+
+        return compact(
+            'transaction',
+            'logo',
+            'ucapan',
+            'deskripsi',
+            'use',
+            'name',
+            'tickets',
+            'ppn',
+            'print',
+            'ticketPrintOrientation'
+        );
     }
 
-    $logo = null;
-    if (!empty($setting->logo)) {
-        $logoPath = public_path('storage/' . $setting->logo);
-        if (is_file($logoPath)) {
-            $logo = asset('/storage/' . $setting->logo);
-        }
-    }
-    if ($logo === null) {
-        $fallbackLogoPath = public_path('/images/rio.png');
-        if (is_file($fallbackLogoPath)) {
-            $logo = 'data:image/png;base64,' . base64_encode(file_get_contents($fallbackLogoPath));
-        }
-    }
-    $use = $logo !== null ? 1 : 0;
-    $name = $setting->name ?? 'Ticketing';
-    $ucapan = $setting->ucapan ?? 'Terima Kasih';
-    $deskripsi = $setting->deskripsi ?? 'qr code hanya berlaku satu kali';
-    $ppn = $setting->ppn ?? 0;
-    $print = 0;
-    $ticketPrintOrientation = $setting->ticket_print_orientation ?? 'without_summary';
+    private function encodeImageAsDataUri(string $path): string
+    {
+        $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+        $mime = match ($extension) {
+            'jpg', 'jpeg' => 'image/jpeg',
+            'gif' => 'image/gif',
+            'svg' => 'image/svg+xml',
+            default => 'image/png',
+        };
 
-    return view('transaction.print', compact('transaction', 'logo', 'ucapan', 'deskripsi', 'use', 'name', 'tickets', 'ppn', 'print', 'ticketPrintOrientation'));
-}
+        return 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($path));
+    }
 
     public function report(Request $request)
     {

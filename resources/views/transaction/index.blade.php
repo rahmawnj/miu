@@ -325,6 +325,7 @@
                     <table class="table table-striped table-bordered align-middle mb-0">
                         <thead>
                             <tr>
+                                <th class="text-nowrap">ID/Code</th>
                                 <th>Ticket</th>
                                 <th class="text-nowrap">Qty</th>
                                 <th class="text-nowrap">Scanned</th>
@@ -334,7 +335,7 @@
                         </thead>
                         <tbody id="scan-detail-body">
                             <tr>
-                                <td colspan="5" class="text-center text-muted">Memuat...</td>
+                                <td colspan="6" class="text-center text-muted">Memuat...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -356,6 +357,25 @@
             </div>
             <div class="modal-body text-center">
                 <img id="modal-photo-img" src="" alt="Foto" class="img-fluid rounded">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-ticket-preview" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-scrollable" role="document" style="max-width: 560px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Preview Ticket</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+            </div>
+            <div class="modal-body p-0">
+                <iframe id="ticket-preview-frame" src="about:blank" style="width:100%; height:60vh; border:0; background:#f8f9fa;"></iframe>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-primary" id="btn-ticket-print">Print</button>
+                <button type="button" class="btn btn-success" id="btn-ticket-download">Download PDF</button>
             </div>
         </div>
     </div>
@@ -712,10 +732,10 @@
         const transactionId = $(this).attr('data-transaction-id');
         const ticketCode = $(this).attr('data-ticket-code') || '-';
         $("#scan-detail-code").text(ticketCode);
-        $("#scan-detail-body").html('<tr><td colspan="5" class="text-center text-muted">Memuat...</td></tr>');
+        $("#scan-detail-body").html('<tr><td colspan="6" class="text-center text-muted">Memuat...</td></tr>');
 
         if (!transactionId) {
-            $("#scan-detail-body").html('<tr><td colspan="5" class="text-center text-danger">ID transaksi tidak ditemukan.</td></tr>');
+            $("#scan-detail-body").html('<tr><td colspan="6" class="text-center text-danger">ID transaksi tidak ditemukan.</td></tr>');
             $('#modal-scan-detail').modal('show');
             return;
         }
@@ -725,13 +745,30 @@
             type: "GET",
             success: function(response) {
                 if (!response || response.status !== 'success') {
-                    $("#scan-detail-body").html('<tr><td colspan="5" class="text-center text-danger">Gagal memuat data.</td></tr>');
+                    $("#scan-detail-body").html('<tr><td colspan="6" class="text-center text-danger">Gagal memuat data.</td></tr>');
                     return;
                 }
 
-                const rows = (response.data || []).map(function(row) {
+                const dataRows = response.data || [];
+                const ticketCounts = {};
+                dataRows.forEach(function(row) {
+                    const name = row.ticket_name ?? '-';
+                    ticketCounts[name] = (ticketCounts[name] || 0) + 1;
+                });
+
+                const rendered = {};
+                const rows = dataRows.map(function(row) {
+                    const name = row.ticket_name ?? '-';
+                    let ticketCell = '';
+                    if (!rendered[name]) {
+                        rendered[name] = true;
+                        const span = ticketCounts[name] || 1;
+                        ticketCell = `<td rowspan="${span}">${name}</td>`;
+                    }
+
                     return `<tr>
-                        <td>${row.ticket_name ?? '-'}</td>
+                        <td class="text-nowrap">${row.ticket_code ?? '-'}</td>
+                        ${ticketCell}
                         <td class="text-center">${row.qty ?? 0}</td>
                         <td class="text-center">${row.scanned ?? 0}</td>
                         <td class="text-center">${row.allowed ?? 0}</td>
@@ -739,10 +776,10 @@
                     </tr>`;
                 });
 
-                $("#scan-detail-body").html(rows.length ? rows.join('') : '<tr><td colspan="5" class="text-center text-muted">Tidak ada data tiket.</td></tr>');
+                $("#scan-detail-body").html(rows.length ? rows.join('') : '<tr><td colspan="6" class="text-center text-muted">Tidak ada data tiket.</td></tr>');
             },
             error: function() {
-                $("#scan-detail-body").html('<tr><td colspan="5" class="text-center text-danger">Gagal memuat data.</td></tr>');
+                $("#scan-detail-body").html('<tr><td colspan="6" class="text-center text-danger">Gagal memuat data.</td></tr>');
             }
         });
 
@@ -755,6 +792,37 @@
 
         $("#modal-photo-img").attr('src', src);
         $('#modal-photo').modal('show');
+    });
+
+    $("#datatable").on('click', '.btn-ticket-preview', function(e) {
+        e.preventDefault();
+        const previewUrl = $(this).attr('data-preview-url');
+        const printUrl = $(this).attr('data-print-url');
+        const pdfUrl = $(this).attr('data-pdf-url');
+
+        $("#ticket-preview-frame").attr('src', previewUrl || 'about:blank');
+        $("#btn-ticket-print").attr('data-print-url', printUrl || '');
+        $("#btn-ticket-download").attr('data-pdf-url', pdfUrl || '');
+
+        $('#modal-ticket-preview').modal('show');
+    });
+
+    $("#btn-ticket-print").on('click', function() {
+        const url = $(this).attr('data-print-url');
+        if (!url) return;
+        window.open(url, '_blank');
+    });
+
+    $("#btn-ticket-download").on('click', function() {
+        const url = $(this).attr('data-pdf-url');
+        if (!url) return;
+        window.open(url, '_blank');
+    });
+
+    $('#modal-ticket-preview').on('hidden.bs.modal', function() {
+        $("#ticket-preview-frame").attr('src', 'about:blank');
+        $("#btn-ticket-print").attr('data-print-url', '');
+        $("#btn-ticket-download").attr('data-pdf-url', '');
     });
 
     $("#btn-export-excel").on('click', function(e) {

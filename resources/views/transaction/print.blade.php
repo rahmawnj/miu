@@ -46,6 +46,11 @@
 
 <body>
     @php
+        $autoPrint = $autoPrint ?? request()->boolean('auto_print', true);
+        $autoRedirect = $autoRedirect ?? request()->boolean('auto_redirect', true);
+        $isPdf = $isPdf ?? false;
+    @endphp
+    @php
         $ticketPrintModeRaw = (string) ($ticketPrintOrientation ?? 'without_summary');
         if ($ticketPrintModeRaw === 'portrait') {
             $ticketPrintModeRaw = 'with_summary';
@@ -218,7 +223,14 @@
             </div>
             <hr style="border-style: dashed;">
             <p style="text-align: center; margin-top: 15px; margin-bottom: 15px">
-                {!! QrCode::size(110)->generate($detail["ticket_code"]) !!}
+                @if($isPdf)
+                    @php
+                        $qrPng = base64_encode(QrCode::format('png')->size(110)->generate($detail["ticket_code"]));
+                    @endphp
+                    <img src="data:image/png;base64,{{ $qrPng }}" alt="QR Code">
+                @else
+                    {!! QrCode::size(110)->generate($detail["ticket_code"]) !!}
+                @endif
                 <br>
                 <span>{{ $detail["ticket_code"] }}</span>
             </p>
@@ -230,23 +242,28 @@
     </div>
     @endforeach
 
-    <script src="{{ asset('/js/jquery.min.js') }}"></script>
+    @if(!$isPdf && $autoPrint)
+        <script src="{{ asset('/js/jquery.min.js') }}"></script>
 
-    <script>
-        $(document).ready(function() {
-            let hasRedirected = false;
-            const backToTransaction = function() {
-                if (hasRedirected) return;
-                hasRedirected = true;
-                document.location.href = "{{ route('transactions.create') }}";
-            };
+        <script>
+            $(document).ready(function() {
+                let hasRedirected = false;
+                const shouldRedirect = {{ $autoRedirect ? 'true' : 'false' }};
+                const backToTransaction = function() {
+                    if (!shouldRedirect || hasRedirected) return;
+                    hasRedirected = true;
+                    document.location.href = "{{ route('transactions.create') }}";
+                };
 
-            window.onafterprint = backToTransaction;
-            window.print();
+                if (shouldRedirect) {
+                    window.onafterprint = backToTransaction;
+                    setTimeout(backToTransaction, 10000);
+                }
 
-            setTimeout(backToTransaction, 10000);
-        })
-    </script>
+                window.print();
+            })
+        </script>
+    @endif
 </body>
 
 </html>

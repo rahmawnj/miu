@@ -112,6 +112,7 @@ Route::middleware('auth')->group(function () {
     Route::get('transactions/{transaction}/scan-details', [TransactionController::class, 'scanDetails'])->name('transactions.scan_details');
     Route::get('transactions/export-daily', [TransactionController::class, 'exportDaily'])->name('transactions.export.daily');
     Route::get('transactions/{transaction:id}/print', [TransactionController::class, 'print'])->name('transactions.print');
+    Route::get('transactions/{transaction:id}/ticket-pdf', [TransactionController::class, 'ticketPdf'])->name('transactions.ticket.pdf');
     Route::get('transaction/create', [DetailTransactionController::class, 'store']);
     Route::post('transactions/{transaction}/full-scan', [TransactionController::class, 'setFullScan'])->name('transactions.set_full_scan');
     Route::resource('transactions', TransactionController::class);
