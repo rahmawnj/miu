@@ -5,7 +5,7 @@ date_default_timezone_set('Asia/Jakarta')
 <html>
 
 <head>
-    <title>Print QR</title>
+    <title>miu ticketing system</title>
     <style>
         @media print {
             .ticket-row {
@@ -52,9 +52,10 @@ date_default_timezone_set('Asia/Jakarta')
             </p>
 
             <hr style="border-style: dashed;">
-            <p style="font-size:9pt;text-align: center;margin-bottom:10px; text-transform: uppercase;">*QRCODE hanya untuk buka gate*</p>
+            <p style="font-size:9pt;text-align: center;margin-bottom:10px; text-transform: uppercase;">*QRCODE untuk aktifkan dispenser*</p>
         </div>
     </div>
 </body>
 
 </html>
+

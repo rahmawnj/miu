@@ -109,6 +109,7 @@ Route::middleware('auth')->group(function () {
         ->parameters(['membership-admin-fees' => 'membershipAdminFee']);
 
     Route::get('transactions/get', [TransactionController::class, 'get'])->name('transactions.list');
+    Route::get('transactions/{transaction}/scan-details', [TransactionController::class, 'scanDetails'])->name('transactions.scan_details');
     Route::get('transactions/export-daily', [TransactionController::class, 'exportDaily'])->name('transactions.export.daily');
     Route::get('transactions/{transaction:id}/print', [TransactionController::class, 'print'])->name('transactions.print');
     Route::get('transaction/create', [DetailTransactionController::class, 'store']);

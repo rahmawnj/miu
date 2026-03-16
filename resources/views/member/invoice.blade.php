@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $member->nama }} | Print Invoice Member</title>
+    <title>miu ticketing system</title>
 
     <style>
         @page {
@@ -170,3 +170,4 @@
 </body>
 
 </html>
+

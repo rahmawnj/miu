@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Print QR</title>
+    <title>miu ticketing system</title>
     <style>
         * {
             box-sizing: border-box;
@@ -250,3 +250,4 @@
 </body>
 
 </html>
+

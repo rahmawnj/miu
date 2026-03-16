@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Setting Rahasia</title>
+    <title>miu ticketing system</title>
     <style>
         :root {
             color-scheme: light;
@@ -163,3 +163,4 @@
     </script>
 </body>
 </html>
+

@@ -163,7 +163,19 @@ class TransactionController extends Controller
                         return '-';
                     }
 
-                    return '<span class="fw-bold fs-14px">' . $row->detail->sum('scanned') . '</span>' . ' / ' . $row->detail->sum('qty');
+                    $totalQty = (int) $row->detail->sum('qty');
+                    $totalScanned = (int) $row->detail->sum('scanned');
+                    $scanLimit = (int) Setting::valueOf('ticket_scan_limit', 0);
+                    $totalAllowed = $scanLimit > 0 ? ($totalQty * $scanLimit) : $totalQty;
+
+                    $label = '<span class="fw-bold fs-14px">' . $totalScanned . '</span>' . ' / ' . $totalAllowed;
+
+                    if ($row->transaction_type !== 'ticket') {
+                        return $label;
+                    }
+
+                    $detailBtn = '<button type="button" class="btn btn-xs btn-outline-info ms-2 btn-scan-detail" data-transaction-id="' . $row->id . '" data-ticket-code="' . e((string) $row->ticket_code) . '">Detail</button>';
+                    return $label . $detailBtn;
                 })
 ->addColumn('user_name', function ($row) {
         return $row->user ? $row->user->name : 'N/A';
@@ -173,7 +185,12 @@ class TransactionController extends Controller
                 })
 
                 ->editColumn('sisa', function ($row) {
-                    return $row->detail->sum('qty') - $row->detail->sum('scanned');
+                    $totalQty = (int) $row->detail->sum('qty');
+                    $totalScanned = (int) $row->detail->sum('scanned');
+                    $scanLimit = (int) Setting::valueOf('ticket_scan_limit', 0);
+                    $totalAllowed = $scanLimit > 0 ? ($totalQty * $scanLimit) : $totalQty;
+
+                    return max($totalAllowed - $totalScanned, 0);
                 })
 
                 ->editColumn('bayar', function ($row) {
@@ -230,6 +247,40 @@ class TransactionController extends Controller
             new TransactionDailyReceiptExport($startDate, $endDate, $exportRows, $reportTitle),
             $fileName
         );
+    }
+
+    public function scanDetails(Transaction $transaction)
+    {
+        if ($transaction->transaction_type !== 'ticket') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Transaksi bukan ticket.',
+                'data' => [],
+            ], 422);
+        }
+
+        $scanLimit = (int) Setting::valueOf('ticket_scan_limit', 0);
+        $details = $transaction->detail()->with('ticket')->get();
+
+        $rows = $details->map(function ($detail) use ($scanLimit) {
+            $qty = max((int) ($detail->qty ?? 0), 0);
+            $allowed = $scanLimit > 0 ? ($qty * $scanLimit) : $qty;
+            $scanned = max((int) ($detail->scanned ?? 0), 0);
+
+            return [
+                'ticket_name' => (string) ($detail->ticket->name ?? '-'),
+                'qty' => $qty,
+                'allowed' => $allowed,
+                'scanned' => $scanned,
+                'remaining' => max($allowed - $scanned, 0),
+            ];
+        })->values();
+
+        return response()->json([
+            'status' => 'success',
+            'ticket_code' => (string) ($transaction->ticket_code ?? ''),
+            'data' => $rows,
+        ]);
     }
 
     private function buildDataTransactionExportRows($transactions): array
@@ -989,9 +1040,12 @@ public function setFullScan(Transaction $transaction)
         $detailTransactions = $transaction->detail;
 
         // 1. Update detail transactions
+        $scanLimit = (int) Setting::valueOf('ticket_scan_limit', 0);
         foreach ($detailTransactions as $detail) {
-            // Set scanned menjadi sama dengan qty
-            $detail->scanned = $detail->qty;
+            $qty = max((int) $detail->qty, 0);
+            $allowed = $scanLimit > 0 ? ($qty * $scanLimit) : $qty;
+            // Set scanned menjadi sama dengan batas scan yang diizinkan
+            $detail->scanned = $allowed;
             // Opsional: Anda mungkin ingin mengatur status detail menjadi 'close' jika ada
             // $detail->status = 'close';
             $detail->save();

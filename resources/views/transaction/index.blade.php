@@ -312,6 +312,41 @@
     </div>
 </div>
 
+<div class="modal fade" id="modal-scan-detail" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Detail Scan Tiket</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-2 text-muted small">Invoice: <span id="scan-detail-code">-</span></div>
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Ticket</th>
+                                <th class="text-nowrap">Qty</th>
+                                <th class="text-nowrap">Scanned</th>
+                                <th class="text-nowrap">Allowed</th>
+                                <th class="text-nowrap">Sisa</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scan-detail-body">
+                            <tr>
+                                <td colspan="5" class="text-center text-muted">Memuat...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="modal-photo" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
@@ -670,6 +705,48 @@
 
         // Tampilkan modal
         $('#modal-full-scan').modal('show');
+    });
+
+    $("#datatable").on('click', '.btn-scan-detail', function(e) {
+        e.preventDefault();
+        const transactionId = $(this).attr('data-transaction-id');
+        const ticketCode = $(this).attr('data-ticket-code') || '-';
+        $("#scan-detail-code").text(ticketCode);
+        $("#scan-detail-body").html('<tr><td colspan="5" class="text-center text-muted">Memuat...</td></tr>');
+
+        if (!transactionId) {
+            $("#scan-detail-body").html('<tr><td colspan="5" class="text-center text-danger">ID transaksi tidak ditemukan.</td></tr>');
+            $('#modal-scan-detail').modal('show');
+            return;
+        }
+
+        $.ajax({
+            url: "{{ url('transactions') }}/" + transactionId + "/scan-details",
+            type: "GET",
+            success: function(response) {
+                if (!response || response.status !== 'success') {
+                    $("#scan-detail-body").html('<tr><td colspan="5" class="text-center text-danger">Gagal memuat data.</td></tr>');
+                    return;
+                }
+
+                const rows = (response.data || []).map(function(row) {
+                    return `<tr>
+                        <td>${row.ticket_name ?? '-'}</td>
+                        <td class="text-center">${row.qty ?? 0}</td>
+                        <td class="text-center">${row.scanned ?? 0}</td>
+                        <td class="text-center">${row.allowed ?? 0}</td>
+                        <td class="text-center">${row.remaining ?? 0}</td>
+                    </tr>`;
+                });
+
+                $("#scan-detail-body").html(rows.length ? rows.join('') : '<tr><td colspan="5" class="text-center text-muted">Tidak ada data tiket.</td></tr>');
+            },
+            error: function() {
+                $("#scan-detail-body").html('<tr><td colspan="5" class="text-center text-danger">Gagal memuat data.</td></tr>');
+            }
+        });
+
+        $('#modal-scan-detail').modal('show');
     });
 
     $("#datatable").on('click', 'tbody img', function() {

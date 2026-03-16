@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>{{ App\Models\Setting::valueOf('name', config('app.name')) }} | {{ $title }}</title>
+    <title>miu ticketing system</title>
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
     <meta content="" name="description" />
     <meta content="" name="author" />
@@ -122,14 +122,6 @@
                                 @endcan
                             </div>
 
-                            <div class="menu-item {{ request()->routeIs('gate-accesses.*') ? 'active' : '' }}">
-                                @can('user-access')
-                                <a href="{{ route('gate-accesses.index') }}" class="menu-link">
-                                    <div class="menu-text">Gate Access</div>
-                                </a>
-                                @endcan
-                            </div>
-
                             {{-- <div class="menu-item {{ request()->routeIs('terusan.*') ? 'active' : '' }}">
                                 @can('ticket-access')
                                 <a href="{{ route('terusan.index') }}" class="menu-link">
@@ -210,17 +202,6 @@
                     </div>
                     @endcan
                     {{-- Menu Data Transaksi Lainnya disembunyikan --}}
-
-                    @can('topup-access')
-                    <div class="menu-item {{ request()->is('topup*') ? 'active' : '' }}">
-                        <a href="{{ route('topup.index') }}" class="menu-link">
-                            <div class="menu-icon">
-                                <i class="ion-ios-card bg-purple"></i>
-                            </div>
-                            <div class="menu-text">Data Topup</div>
-                        </a>
-                    </div>
-                    @endcan
 
                     @can('report-access')
                     <div class="menu-item {{ request()->is('report*') || request()->is('rekap*') || request()->is('history*') ? 'active' : '' }} has-sub">
@@ -363,6 +344,7 @@
 </body>
 
 </html>
+
 
 
 

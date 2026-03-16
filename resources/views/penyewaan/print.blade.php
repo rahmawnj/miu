@@ -5,7 +5,7 @@ date_default_timezone_set('Asia/Jakarta')
 <html>
 
 <head>
-    <title>Print QR</title>
+    <title>miu ticketing system</title>
     <style>
         * {
             box-sizing: border-box;
@@ -156,3 +156,4 @@ date_default_timezone_set('Asia/Jakarta')
 </body>
 
 </html>
+

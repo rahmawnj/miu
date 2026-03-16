@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome Member</title>
+    <title>miu ticketing system</title>
 
     <link href="{{ asset('/') }}css/vendor.min.css" rel="stylesheet" />
     <link href="{{ asset('/') }}css/apple/app.min.css" rel="stylesheet" />

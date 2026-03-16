@@ -6,6 +6,7 @@
 @endpush
 
 @section('content')
+@if(false)
 <div class="panel panel-inverse">
     <div class="panel-heading">
         <h4 class="panel-title">{{ $title }}</h4>
@@ -75,8 +76,10 @@
         @csrf
         @method('DELETE')
     </form>
+    @endif
     @endsection
 
+    @if(false)
     @push('script')
     <script src="{{ asset('/') }}plugins/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="{{ asset('/') }}plugins/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
@@ -175,3 +178,4 @@
         })
     </script>
     @endpush
+    @endif

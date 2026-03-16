@@ -3,7 +3,7 @@
 <html>
 
 <head>
-    <title>Monitoring Group</title>
+    <title>miu ticketing system</title>
 </head>
 
 <body>
@@ -50,7 +50,7 @@
                     <center>
                     <img src="{{ asset('img/no-image.jpg') }}"width="300" width="300" alt="The Logo" class="brand-image" style="opacity: .8;text-align:center;margin-top:50px">
                     </center>
-                    <h1>COUNTING TICKET GATE ` + gate + `<h1>
+                    <h1>COUNTING TICKET DISPENSER ` + gate + `<h1>
                         </br>
 
                         <h1 style="font-size: 100px;">${data.amount-data.amount_scanned}</h1>
@@ -74,3 +74,4 @@
         }, 2000);
     });
 </script>
+

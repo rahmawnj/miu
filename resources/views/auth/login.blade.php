@@ -13,6 +13,27 @@
     <link href="{{ asset('/') }}css/apple/app.min.css" rel="stylesheet" />
     <link href="{{ asset('/') }}plugins/ionicons/css/ionicons.min.css" rel="stylesheet" />
     <!-- ================== END core-css ================== -->
+    <style>
+        .login.login-with-news-feed .news-caption {
+            top: 5px;
+            bottom: auto;
+        }
+        .login.login-with-news-feed .news-caption .news-logo {
+            width: 220px;
+            max-width: 70%;
+            height: auto;
+            display: block;
+            filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.25));
+        }
+        @media (max-width: 767.98px) {
+            .login.login-with-news-feed .news-caption {
+                top: 18px;
+            }
+            .login.login-with-news-feed .news-caption .news-logo {
+                width: 170px;
+            }
+        }
+    </style>
 </head>
 
 <body class='pace-top'>
@@ -30,7 +51,7 @@
             <div class="news-feed">
                 <div class="news-image" style="background-image: url({{ asset('/') }}img/login-bg/login-bg-water.jpg)"></div>
                 <div class="news-caption">
-                    <!-- <h4 class="caption-title"><b>E</b>Ticket</h4> -->
+                    <img class="news-logo" src="{{ asset('img/logo/logo_landscape.png') }}" alt="MIU Ticketing Logo">
                 </div>
             </div>
             <!-- END news-feed -->
@@ -42,7 +63,7 @@
                     <div class="brand">
                         <div class="d-flex align-items-center">
                             <span class="logo"><i class="ion-ios-lock"></i></span>
-                            <b>MyMemberID</b>
+                            <b>MIU Ticketing</b>
                         </div>
                         <small>Login dengan akun anda.</small>
                     </div>
@@ -77,15 +98,6 @@
                         <div class="mb-15px text-center">
                             <button type="submit" class="btn btn-primary mb-3 d-block h-45px w-100 btn-lg fs-14px">Sign me in</button>
 
-                            <div class="d-flex justify-content-between">
-                                <a href="/detail-group" class="btn btn-outline-success">Welcome Ticket</a>
-                                <a href="/welcome-member" class="btn btn-outline-info">Welcome Member</a>
-                            </div>
-
-                        </div>
-                        <hr class="bg-gray-600 opacity-2" />
-                        <div class="text-gray-600 text-center text-gray-500-darker mb-0">
-                            &copy; MyMemberID All Right Reserved 2025
                         </div>
                     </form>
                 </div>

@@ -429,7 +429,7 @@ if (empty($request->ticket)) {
             return $limit;
         }
 
-        return min($qty, $limit);
+        return $qty * $limit;
     }
 
     private function shouldCloseInvoice(Transaction $invoice): bool

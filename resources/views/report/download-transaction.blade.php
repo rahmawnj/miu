@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Print Transaction Report</title>
+    <title>miu ticketing system</title>
     <style>
         body { font-family: 'Courier New', Courier, monospace; font-size: 12px; }
         .table {
@@ -330,3 +330,4 @@
 </script>
 </body>
 </html>
+

@@ -46,23 +46,12 @@
             <input type="number" name="jumlah_ppn" id="jumlah_ppn" class="form-control" value="{{ $ticket->ppn ?? old('jumlah_ppn') }}" readonly>
         </div>
 
-        <div class="form-group mb-3">
-            <label for="jenis" class="form-label">Jenis</label>
-            <select name="jenis" id="jenis" class="form-control">
-                <option disabled selected>-- Select Jenis --</option>
-                @foreach($jenis as $jns)
-                <option {{ ($ticket->jenis_ticket_id ?? old('jenis')) == $jns->id ? 'selected' : '' }} value="{{ $jns->id }}">{{ $jns->nama_jenis }}</option>
-                @endforeach
-            </select>
-            @error('jenis')
-            <small class="text-danger">{{ $message }}</small>
-            @enderror
-        </div>
+        <input type="hidden" name="jenis" value="{{ $jenisRegulerId ?? 1 }}">
 
         <div class="form-group mb-3">
-            <label for="gate_id" class="form-label">Gate ID</label>
+            <label for="gate_id" class="form-label">Dispenser ID</label>
             <select name="gate_id" id="gate_id" class="form-control select2">
-                <option value="" selected>-- Pilih Gate --</option>
+                <option value="" selected>-- Pilih Dispenser --</option>
                 @foreach ($gates as $gate)
                 {{-- Gunakan $ticket->tripod atau old('gate_id') untuk menjaga nilai setelah validasi gagal --}}
                 <option value="{{ $gate->id }}" {{ ($gate->id == ($ticket->tripod ?? old('gate_id'))) ? 'selected' : '' }}>{{ $gate->name }}</option>
@@ -71,24 +60,6 @@
 
             @error('gate_id')
             {{-- PERBAIKAN PENTING DI SINI --}}
-            <small class="text-danger">{{ $message }}</small>
-            @enderror
-        </div>
-
-        <div class="form-group mb-3">
-            <label for="terusan" class="form-label">Ticket Terusan</label>
-            <select name="terusan[]" id="terusan" class="form-control multiple-select2" multiple>
-                @foreach($terusan as $ter)
-                {{-- Tambahkan penanganan old('terusan') jika validasi gagal --}}
-                @php
-                    $isTerusanSelected = in_array($ter->id, $ticket->terusan()->pluck('terusan_id')->toArray());
-                    $isOldTerusanSelected = is_array(old('terusan')) && in_array($ter->id, old('terusan'));
-                @endphp
-                <option {{ ($isTerusanSelected || $isOldTerusanSelected) ? 'selected' : '' }} value="{{ $ter->id }}">{{ $ter->name }}</option>
-                @endforeach
-            </select>
-
-            @error('terusan')
             <small class="text-danger">{{ $message }}</small>
             @enderror
         </div>
@@ -124,12 +95,8 @@
         }
     });
 
-    $(".multiple-select2").select2({
-        placeholder: "Ticket Terusan"
-    });
-
     $(".select2").select2({
-        placeholder: "Gate ID"
+        placeholder: "Dispenser ID"
     });
 </script>
 @endpush

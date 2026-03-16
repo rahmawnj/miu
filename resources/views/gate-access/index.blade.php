@@ -6,6 +6,7 @@
 @endpush
 
 @section('content')
+@if(false)
 <div class="panel panel-inverse">
     <!-- BEGIN panel-heading -->
     <div class="panel-heading">
@@ -20,14 +21,14 @@
     <!-- END panel-heading -->
     <!-- BEGIN panel-body -->
     <div class="panel-body">
-        <a href="#modal-dialog" id="btn-add" class="btn btn-primary mb-3" data-route="{{ route('gate-accesses.store') }}" data-bs-toggle="modal"><i class="ion-ios-add"></i> Add Gate</a>
+        <a href="#modal-dialog" id="btn-add" class="btn btn-primary mb-3" data-route="{{ route('gate-accesses.store') }}" data-bs-toggle="modal"><i class="ion-ios-add"></i> Add Dispenser</a>
 
         <table id="datatable" class="table table-striped table-bordered align-middle">
             <thead>
                 <tr>
                     <th class="text-nowrap">No</th>
-                    <th class="text-nowrap">Gate ID</th>
-                    <th class="text-nowrap">Gate Name</th>
+                    <th class="text-nowrap">Dispenser ID</th>
+                    <th class="text-nowrap">Dispenser Name</th>
                     <th class="text-nowrap">Status</th>
                     <th class="text-nowrap">Action</th>
                 </tr>
@@ -42,7 +43,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Form Gate Access</h4>
+                <h4 class="modal-title">Form Dispenser Access</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
             </div>
             {{-- Ganti id form --}}
@@ -51,7 +52,7 @@
 
                 <div class="modal-body">
                     <div class="form-group mb-3">
-                        <label for="gate_access_id" class="form-label">Gate ID</label>
+                        <label for="gate_access_id" class="form-label">Dispenser ID</label>
                         <input type="text" name="gate_access_id" id="gate_access_id" class="form-control" value="">
 
                         @error('gate_access_id')
@@ -60,7 +61,7 @@
                     </div>
 
                     <div class="form-group mb-3">
-                        <label for="name" class="form-label">Gate Name</label>
+                        <label for="name" class="form-label">Dispenser Name</label>
                         <input type="text" name="name" id="name" class="form-control" value="">
 
                         @error('name')
@@ -95,8 +96,10 @@
     @csrf
     @method('DELETE')
 </form>
+@endif
 @endsection
 
+@if(false)
 @push('script')
 <script src="{{ asset('/') }}plugins/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="{{ asset('/') }}plugins/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
@@ -193,7 +196,7 @@
         $("#form-delete").attr('action', route);
 
         swal({
-            title: 'Hapus data gate?',
+            title: 'Hapus data dispenser?',
             text: 'Data yang terhapus tidak bisa dikembalikan.',
             icon: 'error',
             buttons: {
@@ -222,3 +225,4 @@
     });
 </script>
 @endpush
+@endif

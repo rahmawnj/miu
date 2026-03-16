@@ -24,8 +24,8 @@ class GateAccessController extends Controller
      */
     public function index()
     {
-        $title = 'Data Gate Access';
-        $breadcrumbs = ['Master', 'Data Gate Access'];
+        $title = 'Data Dispenser Access';
+        $breadcrumbs = ['Master', 'Data Dispenser Access'];
 
         return view('gate-access.index', compact('title', 'breadcrumbs'));
     }
@@ -80,7 +80,7 @@ class GateAccessController extends Controller
 
             DB::commit();
 
-            return back()->with('success', "Gate {$request->name} berhasil ditambahkan");
+            return back()->with('success', "Dispenser {$request->name} berhasil ditambahkan");
         } catch (\Throwable $th) {
             DB::rollBack();
             return back()->with('error', $th->getMessage());
@@ -130,7 +130,7 @@ class GateAccessController extends Controller
 
             DB::commit();
 
-            return back()->with('success', "Gate {$gateAccess->name} berhasil diupdate");
+            return back()->with('success', "Dispenser {$gateAccess->name} berhasil diupdate");
         } catch (\Throwable $th) {
             DB::rollBack();
             return back()->with('error', $th->getMessage());
@@ -147,7 +147,7 @@ class GateAccessController extends Controller
             $gateAccess->delete();
             DB::commit();
 
-            return back()->with('success', "Gate {$gateAccess->name} berhasil didelete");
+            return back()->with('success', "Dispenser {$gateAccess->name} berhasil didelete");
         } catch (\Throwable $th) {
             DB::rollBack();
             return back()->with('error', $th->getMessage());

@@ -112,7 +112,7 @@
                     </div>
 
                     <div class="form-group mb-3">
-                        <label for="gates">Gate ID</label>
+                        <label for="gates">Dispenser ID</label>
                         <select name="gates[]" id="gates" class="form-control multiple-select2" multiple>
                             @foreach ($gates as $gate)
                             <option value="{{ $gate->id }}">{{ $gate->name }}</option>
@@ -150,7 +150,7 @@
 
 <script>
     $(".multiple-select2").select2({
-        placeholder: "Select gates",
+        placeholder: "Select dispensers",
         dropdownParent: $("#modal-dialog")
     });
 

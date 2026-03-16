@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Invoice Membership</title>
+    <title>miu ticketing system</title>
     <style>
         @page { size: 80mm auto; margin: 0; }
         body { font-family: Arial, sans-serif; font-size: 11px; color: #111; margin: 0; }
@@ -178,3 +178,4 @@
 </body>
 
 </html>
+

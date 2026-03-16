@@ -65,11 +65,12 @@ class TicketController extends Controller
         $method = 'POST';
         $ticket = new Ticket();
         $jenis = JenisTicket::get();
+        $jenisRegulerId = (int) (JenisTicket::query()->where('nama_jenis', 'Reguler')->value('id') ?? 1);
         $terusan = Terusan::get();
         $setting = Setting::asObject();
         $gates = GateAccess::whereIsActive(1)->get();
 
-        return view('ticket.form', compact('title', 'breadcrumbs', 'action', 'method', 'ticket', 'jenis', 'terusan', 'setting', 'gates'));
+        return view('ticket.form', compact('title', 'breadcrumbs', 'action', 'method', 'ticket', 'jenis', 'terusan', 'setting', 'gates', 'jenisRegulerId'));
     }
 
     public function store(Request $request)
@@ -128,11 +129,12 @@ class TicketController extends Controller
         $action = route('tickets.update', $ticket->id);
         $method = 'PUT';
         $jenis = JenisTicket::get();
+        $jenisRegulerId = (int) (JenisTicket::query()->where('nama_jenis', 'Reguler')->value('id') ?? 1);
         $terusan = Terusan::get();
         $setting = Setting::asObject();
         $gates = GateAccess::whereIsActive(1)->get();
 
-        return view('ticket.form', compact('title', 'breadcrumbs', 'action', 'method', 'ticket', 'jenis', 'terusan', 'setting', 'gates'));
+        return view('ticket.form', compact('title', 'breadcrumbs', 'action', 'method', 'ticket', 'jenis', 'terusan', 'setting', 'gates', 'jenisRegulerId'));
     }
 
     public function update(TicketRequest $request, Ticket $ticket)
