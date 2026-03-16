@@ -78,12 +78,14 @@ class TransactionController extends Controller
                 $data = Transaction::with(['detail.ticket', 'user', 'member'])
                     ->where('is_active', 1)
                     ->whereBetween('created_at', [$startDate, $endDate])
-                    ->orderBy('created_at', 'DESC');
+                    ->orderBy('created_at', 'DESC')
+                    ->orderBy('id', 'DESC');
             } else {
                 $data = Transaction::with(['detail.ticket', 'user', 'member'])
                     ->where(['is_active' => 1, 'user_id' => auth()->user()->id])
                     ->whereBetween('created_at', [$startDate, $endDate])
-                    ->orderBy('created_at', 'DESC');
+                    ->orderBy('created_at', 'DESC')
+                    ->orderBy('id', 'DESC');
             }
 
             $this->applyTransactionTypeFilter($data, $transactionType);

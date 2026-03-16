@@ -57,7 +57,8 @@ class ApiController extends Controller
 
         if (!$transScanned) {
             return response()->json([
-                "status" => "Not found"
+                "status" => "Not found",
+                "message" => "Ticket not found"
             ]);
         }
 
@@ -73,14 +74,16 @@ class ApiController extends Controller
         if ($maxAllowed <= 0 || (int) $transScanned->scanned >= $maxAllowed) {
             return response()->json([
                 "status" => "close",
-                "count" => 0
+                "count" => 0,
+                "message" => "Ticket already fully scanned"
             ]);
         }
 
         if ($transScanned->status == "close") {
             return response()->json([
                 "status" => $transScanned->status,
-                "count" => 0
+                "count" => 0,
+                "message" => "Ticket closed"
             ]);
         }
 
@@ -98,7 +101,8 @@ class ApiController extends Controller
 
         return response()->json([
             "status" => $transScanned->status,
-            "count" => max(0, $maxAllowed - $counting)
+            "count" => max(0, $maxAllowed - $counting),
+            "message" => "OK"
         ]);
     }
 
@@ -109,7 +113,8 @@ class ApiController extends Controller
 
         if (!$transScanned) {
             return response()->json([
-                "status" => "not found"
+                "status" => "not found",
+                "message" => "Ticket not found"
             ]);
         }
 
@@ -125,7 +130,8 @@ class ApiController extends Controller
         if ($maxAllowed <= 0 || (int) $transScanned->amount_scanned >= $maxAllowed) {
             return response()->json([
                 "status" => "closed",
-                "count" => 0
+                "count" => 0,
+                "message" => "Ticket already fully scanned"
             ]);
         }
 
@@ -137,7 +143,8 @@ class ApiController extends Controller
         if ($transScanned->status == "closed") {
             return response()->json([
                 "status" => $transScanned->status,
-                "count" => 0
+                "count" => 0,
+                "message" => "Ticket closed"
             ]);
         }
 
@@ -158,7 +165,8 @@ class ApiController extends Controller
 
         return response()->json([
             "status" => $transScanned->status,
-            "count" => max(0, $maxAllowed - $counting)
+            "count" => max(0, $maxAllowed - $counting),
+            "message" => "OK"
         ]);
     }
 
@@ -200,14 +208,16 @@ if (empty($request->ticket)) {
 
                 return response()->json([
                     "status" => "close",
-                    "count" => 0
+                    "count" => 0,
+                    "message" => "Ticket closed"
                 ]);
             }
 
             if ($transScanned->status == "close") {
                 return response()->json([
                     "status" => $transScanned->status,
-                    "count" => 0
+                    "count" => 0,
+                    "message" => "Ticket closed"
                 ]);
             }
 
@@ -215,7 +225,8 @@ if (empty($request->ticket)) {
             if ($maxAllowed <= 0 || (int) $transScanned->scanned >= $maxAllowed) {
                 return response()->json([
                     "status" => "close",
-                    "count" => 0
+                    "count" => 0,
+                    "message" => "Ticket already fully scanned"
                 ]);
             }
 
@@ -242,7 +253,8 @@ if (empty($request->ticket)) {
 
             return response()->json([
                 "status" => $transScanned->status,
-                "count" => max(0, $maxAllowed - $counting)
+                "count" => max(0, $maxAllowed - $counting),
+                "message" => "OK"
             ]);
         } else {
             $now = Carbon::now('Asia/Jakarta')->format('Y-m-d');
