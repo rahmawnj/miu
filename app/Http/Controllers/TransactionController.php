@@ -124,7 +124,7 @@ class TransactionController extends Controller
                     $buttons = [];
 
                     if ($row->transaction_type === 'ticket') {
-                        $previewUrl = route('transactions.print', $row->id) . '?auto_print=0&auto_redirect=0';
+                        $previewUrl = route('transactions.ticket.pdf', $row->id) . '?inline=1';
                         $printUrl = route('transactions.ticket.pdf', $row->id) . '?inline=1';
                         $pdfUrl = route('transactions.ticket.pdf', $row->id);
 

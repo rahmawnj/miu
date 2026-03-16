@@ -810,6 +810,14 @@
     $("#btn-ticket-print").on('click', function() {
         const url = $(this).attr('data-print-url');
         if (!url) return;
+        const frame = document.getElementById('ticket-preview-frame');
+        if (frame && frame.contentWindow) {
+            try {
+                frame.contentWindow.focus();
+                frame.contentWindow.print();
+                return;
+            } catch (e) {}
+        }
         window.open(url, '_blank');
     });
 
