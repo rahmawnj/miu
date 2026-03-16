@@ -156,7 +156,7 @@
             </div>
 
             <div class="qr">
-                {!! QrCode::size(100)->margin(0)->errorCorrection('H')->generate($member->qr_code) !!}
+                {!! QrCode::format('svg')->size(100)->margin(0)->errorCorrection('H')->generate($member->qr_code) !!}
             </div>
         </div>
 

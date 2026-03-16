@@ -46,7 +46,7 @@ date_default_timezone_set('Asia/Jakarta')
             <!-- <p style="font-size:8pt;text-align: center;margin-top:5px">RIO WATERPARK " Tiket berlaku satu kali masuk "</p> -->
             <hr style="border-style: dashed;">
             <p style="text-align: center; margin-top: 15px; margin-bottom: 15px">
-                <img src="data:image/png;base64,{{ base64_encode(QrCode::format('png')->size(100)->generate($detail->ticket_code)) }}" alt="QR Code">
+                {!! QrCode::format('svg')->size(100)->generate($detail->ticket_code) !!}
                 <br><br>
                 <span>{{ $detail->ticket_code }}</span>
             </p>

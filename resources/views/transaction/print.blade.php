@@ -223,14 +223,7 @@
             </div>
             <hr style="border-style: dashed;">
             <p style="text-align: center; margin-top: 15px; margin-bottom: 15px">
-                @if($isPdf)
-                    @php
-                        $qrPng = base64_encode(QrCode::format('png')->size(110)->generate($detail["ticket_code"]));
-                    @endphp
-                    <img src="data:image/png;base64,{{ $qrPng }}" alt="QR Code">
-                @else
-                    {!! QrCode::size(110)->generate($detail["ticket_code"]) !!}
-                @endif
+                {!! QrCode::format('svg')->size(110)->generate($detail["ticket_code"]) !!}
                 <br>
                 <span>{{ $detail["ticket_code"] }}</span>
             </p>
