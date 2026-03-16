@@ -366,7 +366,7 @@
     <div class="modal-dialog modal-md modal-dialog-scrollable" role="document" style="max-width: 560px;">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Preview Ticket</h4>
+                <h4 class="modal-title">Preview</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
             </div>
             <div class="modal-body p-0">
@@ -750,30 +750,32 @@
                 }
 
                 const dataRows = response.data || [];
-                const ticketCounts = {};
+                const groups = {};
+
                 dataRows.forEach(function(row) {
                     const name = row.ticket_name ?? '-';
-                    ticketCounts[name] = (ticketCounts[name] || 0) + 1;
+                    if (!groups[name]) {
+                        groups[name] = [];
+                    }
+                    groups[name].push(row);
                 });
 
-                const rendered = {};
-                const rows = dataRows.map(function(row) {
-                    const name = row.ticket_name ?? '-';
-                    let ticketCell = '';
-                    if (!rendered[name]) {
-                        rendered[name] = true;
-                        const span = ticketCounts[name] || 1;
-                        ticketCell = `<td rowspan="${span}">${name}</td>`;
-                    }
+                const rows = [];
+                Object.keys(groups).forEach(function(name) {
+                    const items = groups[name];
+                    const span = items.length || 1;
 
-                    return `<tr>
-                        <td class="text-nowrap">${row.ticket_code ?? '-'}</td>
-                        ${ticketCell}
-                        <td class="text-center">${row.qty ?? 0}</td>
-                        <td class="text-center">${row.scanned ?? 0}</td>
-                        <td class="text-center">${row.allowed ?? 0}</td>
-                        <td class="text-center">${row.remaining ?? 0}</td>
-                    </tr>`;
+                    items.forEach(function(row, index) {
+                        const ticketCell = index === 0 ? `<td rowspan="${span}">${name}</td>` : '';
+                        rows.push(`<tr>
+                            <td class="text-nowrap">${row.ticket_code ?? '-'}</td>
+                            ${ticketCell}
+                            <td class="text-center">${row.qty ?? 0}</td>
+                            <td class="text-center">${row.scanned ?? 0}</td>
+                            <td class="text-center">${row.allowed ?? 0}</td>
+                            <td class="text-center">${row.remaining ?? 0}</td>
+                        </tr>`);
+                    });
                 });
 
                 $("#scan-detail-body").html(rows.length ? rows.join('') : '<tr><td colspan="6" class="text-center text-muted">Tidak ada data tiket.</td></tr>');

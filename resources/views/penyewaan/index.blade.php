@@ -172,6 +172,25 @@
         @method('DELETE')
     </form>
 </div>
+
+<div class="modal fade" id="modal-ticket-preview" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-scrollable" role="document" style="max-width: 560px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Preview</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+            </div>
+            <div class="modal-body p-0">
+                <iframe id="ticket-preview-frame" src="about:blank" style="width:100%; height:60vh; border:0; background:#f8f9fa;"></iframe>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-primary" id="btn-ticket-print">Print</button>
+                <button type="button" class="btn btn-success" id="btn-ticket-download">Download PDF</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('script')
@@ -304,6 +323,45 @@
             }
         });
     })
+
+    $("#datatable").on('click', '.btn-ticket-preview', function(e) {
+        e.preventDefault();
+        const previewUrl = $(this).attr('data-preview-url');
+        const printUrl = $(this).attr('data-print-url');
+        const pdfUrl = $(this).attr('data-pdf-url');
+
+        $("#ticket-preview-frame").attr('src', previewUrl || 'about:blank');
+        $("#btn-ticket-print").attr('data-print-url', printUrl || '');
+        $("#btn-ticket-download").attr('data-pdf-url', pdfUrl || '');
+
+        $('#modal-ticket-preview').modal('show');
+    });
+
+    $("#btn-ticket-print").on('click', function() {
+        const frame = document.getElementById('ticket-preview-frame');
+        if (frame && frame.contentWindow) {
+            try {
+                frame.contentWindow.focus();
+                frame.contentWindow.print();
+                return;
+            } catch (e) {}
+        }
+        const url = $(this).attr('data-print-url');
+        if (!url) return;
+        window.open(url, '_blank');
+    });
+
+    $("#btn-ticket-download").on('click', function() {
+        const url = $(this).attr('data-pdf-url');
+        if (!url) return;
+        window.open(url, '_blank');
+    });
+
+    $('#modal-ticket-preview').on('hidden.bs.modal', function() {
+        $("#ticket-preview-frame").attr('src', 'about:blank');
+        $("#btn-ticket-print").attr('data-print-url', '');
+        $("#btn-ticket-download").attr('data-pdf-url', '');
+    });
 </script>
 
 <script>

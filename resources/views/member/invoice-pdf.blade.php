@@ -11,6 +11,7 @@
         .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
         .brand { display: flex; align-items: center; gap: 10px; }
         .brand img { height: 36px; }
+        .brand-name { font-weight: bold; font-size: 12px; line-height: 1.15; word-break: break-word; max-width: 42mm; }
         .title { text-transform: uppercase; font-weight: bold; font-size: 14px; text-align: right; color: #0f2a3c; }
         .muted { color: #444; font-size: 11px; }
         .section-title { font-weight: bold; text-transform: uppercase; margin: 10px 0 6px 0; }
@@ -51,7 +52,7 @@
                         </td>
                         @endif
                         <td style="vertical-align: middle;">
-                            <div style="font-weight:bold;">{{ $app_name ?? 'Ticketing App' }}</div>
+                            <div class="brand-name">{{ $app_name ?? 'Ticketing App' }}</div>
                             <div class="muted">Invoice Membership</div>
                         </td>
                     </tr>

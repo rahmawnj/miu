@@ -23,13 +23,30 @@ date_default_timezone_set('Asia/Jakarta')
         .ticket-card {
             margin: 0 auto;
             vertical-align: top;
-            border-style: solid;
-            border-width: 1px;
+            border: 0;
             background: #fff;
         }
 
         .ticket-card.ticket-portrait {
             max-width: 80mm !important;
+        }
+
+        .brand-title {
+            font-weight: 900;
+            font-size: 10pt;
+            line-height: 1.15;
+            text-transform: uppercase;
+            margin: 0 8px 6px;
+            text-align: center;
+            word-break: break-word;
+        }
+        .item-title {
+            font-weight: 900;
+            font-size: 9pt;
+            line-height: 1.15;
+            text-align: center;
+            margin: 0 8px 4px;
+            word-break: break-word;
         }
 
         @media print {
@@ -50,6 +67,10 @@ date_default_timezone_set('Asia/Jakarta')
 
 <body>
     @php
+        $autoPrint = $autoPrint ?? request()->boolean('auto_print', true);
+        $isPdf = $isPdf ?? false;
+    @endphp
+    @php
         $qty = max((int) ($penyewaan->qty ?? 0), 1);
         $lineSubtotal = (float) ($penyewaan->jumlah ?? 0);
         $lineUnitPrice = $lineSubtotal / $qty;
@@ -64,16 +85,16 @@ date_default_timezone_set('Asia/Jakarta')
         $cardNumberDisplay = $isCardMethod ? ($cardNumber !== '' ? $cardNumber : '-') : '';
         $bankDisplay = $isCardMethod ? ($bankName !== '' ? $bankName : '-') : '';
     @endphp
-    <div class="ticket-row" style="margin-top: 10px;">
+    <div class="ticket-row" style="margin-top: 4px;">
         <div class="qr-code ticket-card ticket-portrait" style="margin: 0 auto 0 auto;">
             <div style="font-size: 9.2pt; line-height: 16.5px; margin-top: 10px; margin-bottom: 10px;">
                 <div style="text-align:center; margin-bottom: 10px;">
-                    <div style="font-weight: 900; font-size: 10.5pt; text-transform: uppercase; margin-bottom: 6px;">{{ $name }}</div>
+                    <div class="brand-title">{{ $name }}</div>
                     @if($use == 1)
                     <img src="{{ $logo }}" width="90" alt="The Logo" class="brand-image" style="opacity: .9; margin-bottom: 6px;">
                     @endif
                     <div style="margin: 6px 10px;"><hr style="border-style: dashed;"></div>
-                    <div style="font-weight: 900; font-size: 9.2pt;">{{ $penyewaan->sewa->name }}</div>
+                    <div class="item-title">{{ $penyewaan->sewa->name }}</div>
                     <div style="font-size: 8.2pt;">{{ date('d/m/Y H:i:s', strtotime($penyewaan->created_at)) }}</div>
                 </div>
 
@@ -146,13 +167,14 @@ date_default_timezone_set('Asia/Jakarta')
         </div>
     </div>
 
-    <script src="{{ asset('js/jquery.min.js') }}"></script>
-
-    <script>
-        $(document).ready(function() {
-            window.print()
-        })
-    </script>
+    @if(!$isPdf && $autoPrint)
+        <script src="{{ asset('js/jquery.min.js') }}"></script>
+        <script>
+            $(document).ready(function() {
+                window.print()
+            })
+        </script>
+    @endif
 </body>
 
 </html>

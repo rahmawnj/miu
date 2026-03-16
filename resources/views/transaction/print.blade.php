@@ -20,13 +20,31 @@
         .ticket-card {
             margin: 0 auto;
             vertical-align: top;
-            border-style: solid;
-            border-width: 1px;
+            border: 0;
             background: #fff;
         }
 
         .ticket-card.ticket-portrait {
             max-width: 80mm !important;
+        }
+
+        .brand-title {
+            font-weight: 900;
+            font-size: 10pt;
+            line-height: 1.15;
+            text-transform: uppercase;
+            margin: 0 8px 6px;
+            text-align: center;
+            word-break: break-word;
+        }
+        .item-title {
+            display: block;
+            text-align: center;
+            font-weight: 900;
+            font-size: 9pt;
+            line-height: 1.15;
+            margin: 0 8px 4px;
+            word-break: break-word;
         }
 
         .ticket-row {
@@ -123,11 +141,11 @@
     @endphp
 
     @if($shouldPrintSummary)
-    <div class="ticket-row" style="margin-top: 10px;">
+    <div class="ticket-row" style="margin-top: 4px;">
         <div class="qr-code ticket-card ticket-portrait" style="max-width:80mm !important; margin: 0 auto 0 auto;">
             <div class="detail" style="font-size: 10pt; line-height: 18px; margin-top: 10px; margin-bottom: 10px;">
                 <div style="text-align:center; margin-bottom: 10px;">
-                    <div style="font-weight: 900; font-size: 12pt; text-transform: uppercase; margin-bottom: 6px;">{{ $name }}</div>
+                    <div class="brand-title">{{ $name }}</div>
                     @if(!empty($logo))
                     <img src="{{ $logo }}" width="90" alt="The Logo" class="brand-image" style="opacity: .9; margin-bottom: 6px;">
                     @endif
@@ -201,18 +219,18 @@
                 <span>{{ $kasirName }}</span>
             </div>
             <hr style="border-style: dashed;">
-            <p style="font-size:9pt;text-align: center;margin-bottom:8px; text-transform: uppercase;">{!! nl2br(e($ucapan)) !!}</p>
-            <p style="font-size:9pt;text-align: center;margin-bottom:10px; text-transform: uppercase;">{!! nl2br(e($deskripsi)) !!}</p>
+            <p style="font-size:8pt;line-height:1.2;text-align:center;margin:6px 6px 6px; text-transform: uppercase; word-break: break-word;">{!! nl2br(e($ucapan)) !!}</p>
+            <p style="font-size:8pt;line-height:1.2;text-align:center;margin:0 6px 8px; text-transform: uppercase; word-break: break-word;">{!! nl2br(e($deskripsi)) !!}</p>
         </div>
     </div>
     </div>
     @endif
 
     @foreach($printTickets as $ticketIndex => $detail)
-    <div class="ticket-row" style="margin-top: 10px;">
+    <div class="ticket-row" style="margin-top: 4px;">
         <div class="qr-code ticket-card ticket-portrait" style="margin: 0 auto 0 auto;">
             <div class="detail" style="font-size: 10pt; line-height: 18px;">
-                <span style="display: block; text-align: center; font-weight: 900;">{{ $detail["name"] }}</span>
+                <span class="item-title">{{ $detail["name"] }}</span>
                 @if($print == 0)
                 <span style="display: block; text-align: center;">Rp. {{ $detail["harga"] }}</span>
                 @endif
@@ -233,7 +251,7 @@
                 @endif
             </div>
             <hr style="border-style: dashed;">
-            <p style="text-align: center; margin-top: 15px; margin-bottom: 15px">
+            <p style="text-align: center; margin-top: 8px; margin-bottom: 8px">
                 @php
                     $qrSvg = QrCode::format('svg')->size(110)->generate($detail["ticket_code"]);
                     $qrSvgData = 'data:image/svg+xml;base64,' . base64_encode($qrSvg);
@@ -244,8 +262,8 @@
             </p>
 
             <hr style="border-style: dashed;">
-            <p style="font-size:9pt;text-align: center;margin-bottom:8px; text-transform: uppercase;">{!! nl2br(e($ucapan)) !!}</p>
-            <p style="font-size:9pt;text-align: center;margin-bottom:10px; text-transform: uppercase;">{!! nl2br(e($deskripsi)) !!}</p>
+            <p style="font-size:8pt;line-height:1.2;text-align:center;margin:4px 6px 4px; text-transform: uppercase; word-break: break-word;">{!! nl2br(e($ucapan)) !!}</p>
+            <p style="font-size:8pt;line-height:1.2;text-align:center;margin:0 6px 6px; text-transform: uppercase; word-break: break-word;">{!! nl2br(e($deskripsi)) !!}</p>
         </div>
     </div>
     @endforeach

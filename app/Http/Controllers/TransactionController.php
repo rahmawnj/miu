@@ -135,6 +135,19 @@ class TransactionController extends Controller
                             . ' title="Preview Ticket">'
                             . '<i class="fas fa-print"></i>'
                             . '</button>';
+                    } elseif ($row->transaction_type === 'rental') {
+                        $rentalId = (int) ($row->ticket_id ?? 0);
+                        $previewUrl = $rentalId > 0 ? route('penyewaan.print.pdf', $rentalId) . '?inline=1' : '#';
+                        $printUrl = $previewUrl;
+                        $pdfUrl = $rentalId > 0 ? route('penyewaan.print.pdf', $rentalId) : '#';
+
+                        $buttons[] = '<button type="button" class="btn btn-sm btn-primary btn-ticket-preview"'
+                            . ' data-preview-url="' . e($previewUrl) . '"'
+                            . ' data-print-url="' . e($printUrl) . '"'
+                            . ' data-pdf-url="' . e($pdfUrl) . '"'
+                            . ' title="Preview Transaksi Lainnya">'
+                            . '<i class="fas fa-print"></i>'
+                            . '</button>';
                     } elseif (!in_array($row->transaction_type, ['registration', 'renewal'])) {
                         $buttons[] = '<a href="' . route("transactions.print", $row->id) . '" class="btn btn-sm btn-primary"><i class="fas fa-print"></i></a>';
                     }
@@ -154,7 +167,17 @@ class TransactionController extends Controller
                     }
 
                     if (in_array($row->transaction_type, ['registration', 'renewal'])) {
-                        $buttons[] = '<a href="' . route('transactions.invoice.pdf', ['transaction' => $row->id, 'print' => 1]) . '" class="btn btn-sm btn-secondary" target="_blank" title="Preview & Download Invoice"><i class="fas fa-file-invoice"></i></a>';
+                        $previewUrl = route('transactions.invoice.pdf_file', $row->id) . '?inline=1';
+                        $printUrl = route('transactions.invoice.pdf_file', $row->id) . '?inline=1';
+                        $pdfUrl = route('transactions.invoice.pdf_file', $row->id);
+
+                        $buttons[] = '<button type="button" class="btn btn-sm btn-secondary btn-ticket-preview"'
+                            . ' data-preview-url="' . e($previewUrl) . '"'
+                            . ' data-print-url="' . e($printUrl) . '"'
+                            . ' data-pdf-url="' . e($pdfUrl) . '"'
+                            . ' title="Preview Invoice">'
+                            . '<i class="fas fa-file-invoice"></i>'
+                            . '</button>';
                     }
 
                     if (auth()->user()->can('transaction-delete')) {
@@ -912,7 +935,7 @@ class TransactionController extends Controller
             'isPdf' => true,
             'autoPrint' => false,
             'autoRedirect' => false,
-        ])->setPaper([0, 0, 226.77, 566.93]);
+        ])->setPaper([0, 0, 226.77, 340.16]);
 
         $ticketCode = (string) ($transaction->ticket_code ?? ('TRX-' . $transaction->id));
         $safeCode = preg_replace('/[^A-Za-z0-9_\-]/', '-', $ticketCode);
@@ -1048,6 +1071,32 @@ class TransactionController extends Controller
 
     public function invoicePdf(Transaction $transaction)
     {
+        $payload = $this->buildMembershipInvoicePayload($transaction);
+
+        return view('member.invoice-pdf', $payload);
+    }
+
+    public function invoicePdfFile(Transaction $transaction)
+    {
+        $payload = $this->buildMembershipInvoicePayload($transaction);
+        $payload['auto_print'] = false;
+
+        $pdf = Pdf::loadView('member.invoice-pdf', $payload)
+            ->setPaper([0, 0, 226.77, 566.93]);
+
+        $invoiceCode = (string) ($transaction->ticket_code ?? ('INV-' . $transaction->id));
+        $safeCode = preg_replace('/[^A-Za-z0-9_\-]/', '-', $invoiceCode);
+        $fileName = 'invoice-' . $safeCode . '.pdf';
+
+        if (request()->boolean('inline')) {
+            return $pdf->stream($fileName);
+        }
+
+        return $pdf->download($fileName);
+    }
+
+    private function buildMembershipInvoicePayload(Transaction $transaction): array
+    {
         if (!in_array($transaction->transaction_type, ['registration', 'renewal'])) {
             abort(404);
         }
@@ -1104,7 +1153,7 @@ class TransactionController extends Controller
             }
         }
 
-        return view('member.invoice-pdf', [
+        return [
             'member' => $member,
             'type' => $type,
             'invoice_code' => $invoiceCode,
@@ -1117,7 +1166,7 @@ class TransactionController extends Controller
             'ucapan' => $ucapan,
             'deskripsi' => $deskripsi,
             'auto_print' => $autoPrint,
-        ]);
+        ];
     }
 
     // Dalam TransactionController.php

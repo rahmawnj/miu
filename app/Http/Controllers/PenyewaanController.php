@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Validation\Rule;
 use Yajra\DataTables\Facades\DataTables;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PenyewaanController extends Controller
 {
@@ -47,7 +48,15 @@ class PenyewaanController extends Controller
             return DataTables::eloquent($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $actionBtn = '<a href="' . route('penyewaan.print', $row->id) . '" class="btn btn-sm btn-primary">Print</a> ';
+                    $previewUrl = route('penyewaan.print.pdf', $row->id) . '?inline=1';
+                    $printUrl = route('penyewaan.print.pdf', $row->id) . '?inline=1';
+                    $pdfUrl = route('penyewaan.print.pdf', $row->id);
+
+                    $actionBtn = '<button type="button" class="btn btn-sm btn-primary btn-ticket-preview"'
+                        . ' data-preview-url="' . e($previewUrl) . '"'
+                        . ' data-print-url="' . e($printUrl) . '"'
+                        . ' data-pdf-url="' . e($pdfUrl) . '"'
+                        . ' title="Preview Transaksi Lainnya">Print</button> ';
 
                     if (auth()->user()->can('penyewaan-delete')) {
                         $actionBtn .= '<button type="button" data-route="' . route('penyewaan.destroy', $row->id) . '" class="delete btn btn-danger btn-delete btn-sm">Delete</button>';
@@ -276,20 +285,73 @@ public function store(Request $request)
 
     public function print($id)
     {
-        $penyewaan = Penyewaan::find($id);
+        $payload = $this->buildPenyewaanPrintPayload($id, false);
+
+        return view('penyewaan.print', $payload + ['isPdf' => false]);
+    }
+
+    public function printPdf($id)
+    {
+        $payload = $this->buildPenyewaanPrintPayload($id, true);
+
+        $pdf = Pdf::loadView('penyewaan.print', $payload + [
+            'isPdf' => true,
+            'autoPrint' => false,
+        ])->setPaper([0, 0, 226.77, 453.54]);
+
+        $trxCode = (string) ($payload['transaction']?->ticket_code ?? ('RENT-' . $id));
+        $safeCode = preg_replace('/[^A-Za-z0-9_\-]/', '-', $trxCode);
+        $fileName = 'rental-' . $safeCode . '.pdf';
+
+        if (request()->boolean('inline')) {
+            return $pdf->stream($fileName);
+        }
+
+        return $pdf->download($fileName);
+    }
+
+    private function buildPenyewaanPrintPayload(int $id, bool $forPdf): array
+    {
+        $penyewaan = Penyewaan::findOrFail($id);
         $transaction = Transaction::where('ticket_id', $id)
             ->where('transaction_type', 'rental')
             ->latest()
             ->first();
         $setting = Setting::asObject();
 
-        $logo = !empty($setting->logo) ? asset('/storage/' . $setting->logo) : 'data:image/png;base64,' . base64_encode(file_get_contents(public_path('/images/rio.png')));
+        $logo = null;
+        if (!empty($setting->logo)) {
+            $logoPath = public_path('storage/' . $setting->logo);
+            if (is_file($logoPath)) {
+                $logo = $forPdf ? $this->encodeImageAsDataUri($logoPath) : asset('/storage/' . $setting->logo);
+            }
+        }
+        if ($logo === null) {
+            $fallbackLogoPath = public_path('/images/rio.png');
+            if (is_file($fallbackLogoPath)) {
+                $logo = $this->encodeImageAsDataUri($fallbackLogoPath);
+            }
+        }
+
         $name = $setting->name ?? 'Ticketing';
         $ucapan = $setting->ucapan ?? 'Terima Kasih';
         $deskripsi = $setting->deskripsi ?? 'qr code hanya berlaku satu kali';
         $use = $setting->use_logo ?? false;
 
-        return view('penyewaan.print', compact('penyewaan', 'transaction', 'logo', 'name', 'use', 'ucapan', 'deskripsi'));
+        return compact('penyewaan', 'transaction', 'logo', 'name', 'use', 'ucapan', 'deskripsi');
+    }
+
+    private function encodeImageAsDataUri(string $path): string
+    {
+        $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+        $mime = match ($extension) {
+            'jpg', 'jpeg' => 'image/jpeg',
+            'gif' => 'image/gif',
+            'svg' => 'image/svg+xml',
+            default => 'image/png',
+        };
+
+        return 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($path));
     }
 
     public function destroy(Penyewaan $penyewaan)

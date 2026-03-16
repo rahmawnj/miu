@@ -89,6 +89,7 @@ Route::middleware('auth')->group(function () {
     Route::get('members/{member:id}/invoice-pdf', [MemberController::class, 'invoicePdf'])->name('members.invoice.pdf');
     Route::get('transactions/{transaction}/invoice', [TransactionController::class, 'invoice'])->name('transactions.invoice');
     Route::get('transactions/{transaction}/invoice-pdf', [TransactionController::class, 'invoicePdf'])->name('transactions.invoice.pdf');
+    Route::get('transactions/{transaction:id}/invoice-pdf-file', [TransactionController::class, 'invoicePdfFile'])->name('transactions.invoice.pdf_file');
     Route::post('update-setting', [MemberController::class, 'update_setting'])->name('setting.update');
     Route::post('import', [MemberController::class, 'import'])->name('member.import');
     Route::get('members/bulk-renew', [MemberController::class, 'bulkRenewIndex'])->name('members.bulk_renew');
@@ -128,6 +129,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('penyewaan/get', [PenyewaanController::class, 'get'])->name('penyewaan.list');
     Route::get('penyewaan/{id}/print', [PenyewaanController::class, 'print'])->name('penyewaan.print');
+    Route::get('penyewaan/{id}/print-pdf', [PenyewaanController::class, 'printPdf'])->name('penyewaan.print.pdf');
     Route::resource('penyewaan', PenyewaanController::class);
 
     Route::get('topup/get', [TopupController::class, 'get'])->name('topup.list');
