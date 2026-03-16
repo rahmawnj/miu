@@ -125,7 +125,7 @@ class TransactionController extends Controller
 
                     if ($row->transaction_type === 'ticket') {
                         $previewUrl = route('transactions.print', $row->id) . '?auto_print=0&auto_redirect=0';
-                        $printUrl = route('transactions.print', $row->id);
+                        $printUrl = route('transactions.ticket.pdf', $row->id) . '?inline=1';
                         $pdfUrl = route('transactions.ticket.pdf', $row->id);
 
                         $buttons[] = '<button type="button" class="btn btn-sm btn-primary btn-ticket-preview"'
@@ -908,27 +908,19 @@ class TransactionController extends Controller
         }
 
         $payload = $this->buildTicketPrintPayload($transaction, true);
-        $ticketPrintModeRaw = (string) ($payload['ticketPrintOrientation'] ?? 'without_summary');
-        if ($ticketPrintModeRaw === 'portrait') {
-            $ticketPrintModeRaw = 'with_summary';
-        } elseif ($ticketPrintModeRaw === 'portrait_with_first_qr') {
-            $ticketPrintModeRaw = 'without_summary';
-        }
-
-        $shouldPrintSummary = $ticketPrintModeRaw === 'with_summary';
-        $ticketCount = max((int) count($payload['tickets'] ?? []), 1);
-        $rowCount = $ticketCount + ($shouldPrintSummary ? 1 : 0);
-        $height = max(900, 260 * $rowCount);
-
         $pdf = Pdf::loadView('transaction.print', $payload + [
             'isPdf' => true,
             'autoPrint' => false,
             'autoRedirect' => false,
-        ])->setPaper([0, 0, 226.77, $height]);
+        ])->setPaper([0, 0, 226.77, 566.93]);
 
         $ticketCode = (string) ($transaction->ticket_code ?? ('TRX-' . $transaction->id));
         $safeCode = preg_replace('/[^A-Za-z0-9_\-]/', '-', $ticketCode);
         $fileName = 'ticket-' . $safeCode . '.pdf';
+
+        if (request()->boolean('inline')) {
+            return $pdf->stream($fileName);
+        }
 
         return $pdf->download($fileName);
     }

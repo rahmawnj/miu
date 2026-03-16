@@ -29,6 +29,17 @@
             max-width: 80mm !important;
         }
 
+        .ticket-row {
+            break-after: page;
+            page-break-after: always;
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+        .ticket-row:last-child {
+            break-after: auto;
+            page-break-after: auto;
+        }
+
         @media print {
             .ticket-row {
                 break-after: page;
