@@ -223,7 +223,11 @@
             </div>
             <hr style="border-style: dashed;">
             <p style="text-align: center; margin-top: 15px; margin-bottom: 15px">
-                {!! QrCode::format('svg')->size(110)->generate($detail["ticket_code"]) !!}
+                @php
+                    $qrSvg = QrCode::format('svg')->size(110)->generate($detail["ticket_code"]);
+                    $qrSvgData = 'data:image/svg+xml;base64,' . base64_encode($qrSvg);
+                @endphp
+                <img src="{{ $qrSvgData }}" alt="QR Code" width="110" height="110">
                 <br>
                 <span>{{ $detail["ticket_code"] }}</span>
             </p>

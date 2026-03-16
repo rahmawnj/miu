@@ -156,7 +156,11 @@
             </div>
 
             <div class="qr">
-                {!! QrCode::format('svg')->size(100)->margin(0)->errorCorrection('H')->generate($member->qr_code) !!}
+                @php
+                    $qrSvg = QrCode::format('svg')->size(100)->margin(0)->errorCorrection('H')->generate($member->qr_code);
+                    $qrSvgData = 'data:image/svg+xml;base64,' . base64_encode($qrSvg);
+                @endphp
+                <img src="{{ $qrSvgData }}" alt="QR Code" style="width:100%; height:100%;">
             </div>
         </div>
 
