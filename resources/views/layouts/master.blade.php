@@ -161,6 +161,12 @@
                                 @endcan
                             </div>
 
+                            <div class="menu-item {{ request()->routeIs('gate-accesses.*') ? 'active' : '' }}">
+                                <a href="{{ route('gate-accesses.index') }}" class="menu-link">
+                                    <div class="menu-text">Data Dispenser</div>
+                                </a>
+                            </div>
+
                         </div>
                     </div>
                     @endcan
