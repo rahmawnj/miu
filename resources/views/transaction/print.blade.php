@@ -13,8 +13,14 @@
             margin: 0;
         }
 
+        html,
         body {
             margin: 0;
+            width: 80mm;
+        }
+
+        body {
+            min-width: 80mm;
         }
 
         .ticket-card {
@@ -48,27 +54,45 @@
         }
 
         .ticket-row {
-            break-after: page;
-            page-break-after: always;
             break-inside: avoid;
             page-break-inside: avoid;
+            margin-top: 4px;
         }
-        .ticket-row:last-child {
+        .ticket-row:first-child {
+            margin-top: 0;
+        }
+
+        .ticket-footer {
+            margin: 4px 6px 6px;
+            text-align: center;
+            text-transform: uppercase;
+            word-break: break-word;
+        }
+
+        .ticket-footer p {
+            font-size: 8pt;
+            line-height: 1.2;
+            margin: 0;
+        }
+
+        .ticket-footer p + p {
+            margin-top: 2px;
+        }
+
+        @if($isPdf ?? false)
+        .ticket-row {
             break-after: auto;
             page-break-after: auto;
         }
+        @endif
 
         @media print {
+            @if($isPdf ?? false)
             .ticket-row {
-                break-after: page;
-                page-break-after: always;
-                break-inside: avoid;
-                page-break-inside: avoid;
-            }
-            .ticket-row:last-child {
                 break-after: auto;
                 page-break-after: auto;
             }
+            @endif
         }
     </style>
 </head>
@@ -138,10 +162,19 @@
         $printTickets = $tickets;
         $ticketScanLimit = (int) \App\Models\Setting::valueOf('ticket_scan_limit', 0);
         $ticketScanLimitLabel = $ticketScanLimit > 0 ? ($ticketScanLimit . ' kali') : 'Tidak dibatasi';
+        $footerGreeting = trim((string) ($ucapan ?? ''));
+        $footerDescription = trim((string) ($deskripsi ?? ''));
+        $footerPlaceholders = ['', '-', '--'];
+        if (in_array($footerGreeting, $footerPlaceholders, true)) {
+            $footerGreeting = '';
+        }
+        if (in_array($footerDescription, $footerPlaceholders, true)) {
+            $footerDescription = '';
+        }
     @endphp
 
     @if($shouldPrintSummary)
-    <div class="ticket-row" style="margin-top: 4px;">
+    <div class="ticket-row">
         <div class="qr-code ticket-card ticket-portrait" style="max-width:80mm !important; margin: 0 auto 0 auto;">
             <div class="detail" style="font-size: 10pt; line-height: 18px; margin-top: 10px; margin-bottom: 10px;">
                 <div style="text-align:center; margin-bottom: 10px;">
@@ -219,15 +252,23 @@
                 <span>{{ $kasirName }}</span>
             </div>
             <hr style="border-style: dashed;">
-            <p style="font-size:8pt;line-height:1.2;text-align:center;margin:6px 6px 6px; text-transform: uppercase; word-break: break-word;">{!! nl2br(e($ucapan)) !!}</p>
-            <p style="font-size:8pt;line-height:1.2;text-align:center;margin:0 6px 8px; text-transform: uppercase; word-break: break-word;">{!! nl2br(e($deskripsi)) !!}</p>
+            @if($footerGreeting !== '' || $footerDescription !== '')
+            <div class="ticket-footer">
+                @if($footerGreeting !== '')
+                <p>{!! nl2br(e($footerGreeting)) !!}</p>
+                @endif
+                @if($footerDescription !== '')
+                <p>{!! nl2br(e($footerDescription)) !!}</p>
+                @endif
+            </div>
+            @endif
         </div>
     </div>
     </div>
     @endif
 
     @foreach($printTickets as $ticketIndex => $detail)
-    <div class="ticket-row" style="margin-top: 4px;">
+    <div class="ticket-row">
         <div class="qr-code ticket-card ticket-portrait" style="margin: 0 auto 0 auto;">
             <div class="detail" style="font-size: 10pt; line-height: 18px;">
                 <span class="item-title">{{ $detail["name"] }}</span>
@@ -262,8 +303,16 @@
             </p>
 
             <hr style="border-style: dashed;">
-            <p style="font-size:8pt;line-height:1.2;text-align:center;margin:4px 6px 4px; text-transform: uppercase; word-break: break-word;">{!! nl2br(e($ucapan)) !!}</p>
-            <p style="font-size:8pt;line-height:1.2;text-align:center;margin:0 6px 6px; text-transform: uppercase; word-break: break-word;">{!! nl2br(e($deskripsi)) !!}</p>
+            @if($footerGreeting !== '' || $footerDescription !== '')
+            <div class="ticket-footer">
+                @if($footerGreeting !== '')
+                <p>{!! nl2br(e($footerGreeting)) !!}</p>
+                @endif
+                @if($footerDescription !== '')
+                <p>{!! nl2br(e($footerDescription)) !!}</p>
+                @endif
+            </div>
+            @endif
         </div>
     </div>
     @endforeach

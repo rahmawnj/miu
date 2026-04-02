@@ -126,8 +126,8 @@ class TransactionController extends Controller
                     $buttons = [];
 
                     if ($row->transaction_type === 'ticket') {
-                        $previewUrl = route('transactions.ticket.pdf', $row->id) . '?inline=1';
-                        $printUrl = route('transactions.ticket.pdf', $row->id) . '?inline=1';
+                        $previewUrl = route('transactions.print', $row->id) . '?auto_print=0&auto_redirect=0';
+                        $printUrl = $previewUrl;
                         $pdfUrl = route('transactions.ticket.pdf', $row->id);
 
                         $buttons[] = '<button type="button" class="btn btn-sm btn-primary btn-ticket-preview"'
@@ -933,11 +933,13 @@ class TransactionController extends Controller
         }
 
         $payload = $this->buildTicketPrintPayload($transaction, true);
+        $pdfPaperHeight = $this->resolveTicketPdfPaperHeight($payload);
+
         $pdf = Pdf::loadView('transaction.print', $payload + [
             'isPdf' => true,
             'autoPrint' => false,
             'autoRedirect' => false,
-        ])->setPaper([0, 0, 226.77, 340.16]);
+        ])->setPaper([0, 0, 226.77, $pdfPaperHeight]);
 
         $ticketCode = (string) ($transaction->ticket_code ?? ('TRX-' . $transaction->id));
         $safeCode = preg_replace('/[^A-Za-z0-9_\-]/', '-', $ticketCode);
@@ -1006,8 +1008,8 @@ class TransactionController extends Controller
 
         $use = $logo !== null ? 1 : 0;
         $name = $setting->name ?? 'Ticketing';
-        $ucapan = $setting->ucapan ?? 'Terima Kasih';
-        $deskripsi = $setting->deskripsi ?? 'qr code hanya berlaku satu kali';
+        $ucapan = $this->sanitizeTicketFooterText($setting->ucapan ?? 'Terima Kasih');
+        $deskripsi = $this->sanitizeTicketFooterText($setting->deskripsi ?? 'qr code hanya berlaku satu kali');
         $ppn = $setting->ppn ?? 0;
         $print = 0;
         $ticketPrintOrientation = $setting->ticket_print_orientation ?? 'without_summary';
@@ -1024,6 +1026,92 @@ class TransactionController extends Controller
             'print',
             'ticketPrintOrientation'
         );
+    }
+
+    private function resolveTicketPdfPaperHeight(array $payload): float
+    {
+        $ticketPrintMode = $this->normalizeTicketPrintMode((string) ($payload['ticketPrintOrientation'] ?? 'without_summary'));
+        $transaction = $payload['transaction'] ?? null;
+        $details = $transaction?->detail ?? collect();
+        $tickets = $payload['tickets'] ?? [];
+        $ticketCount = max(count($tickets), 1);
+
+        $cardLineCount = 0;
+        foreach (['nama_kartu', 'no_kartu', 'bank'] as $field) {
+            if (trim((string) ($transaction?->{$field} ?? '')) !== '') {
+                $cardLineCount++;
+            }
+        }
+
+        $footerLineCount = $this->countTicketTextLines((string) ($payload['ucapan'] ?? ''))
+            + $this->countTicketTextLines((string) ($payload['deskripsi'] ?? ''));
+
+        $ticketHeightMm = 92
+            + ($cardLineCount * 5)
+            + ($footerLineCount * 4.5);
+
+        $summaryHeightMm = $ticketHeightMm;
+        if ($ticketPrintMode === 'with_summary') {
+            $summaryItemCount = $details
+                ->groupBy(function ($detail) {
+                    $ticketId = (int) ($detail->ticket_id ?? 0);
+                    $ticketName = trim((string) ($detail->ticket->name ?? '-'));
+                    return $ticketId . '|' . $ticketName;
+                })
+                ->count();
+
+            $summaryHeightMm = 96
+                + ($summaryItemCount * 10)
+                + ($cardLineCount * 5)
+                + ($footerLineCount * 4.5);
+        }
+
+        $sectionGapMm = 6;
+        $paperHeightMm = ($ticketHeightMm * $ticketCount) + ($sectionGapMm * max($ticketCount - 1, 0));
+
+        if ($ticketPrintMode === 'with_summary') {
+            $paperHeightMm += $summaryHeightMm + $sectionGapMm;
+        }
+
+        $paperHeightMm += 18;
+        $paperHeightMm = min(max($paperHeightMm, 120), 3000);
+
+        return round($paperHeightMm * 72 / 25.4, 2);
+    }
+
+    private function normalizeTicketPrintMode(string $ticketPrintOrientation): string
+    {
+        if ($ticketPrintOrientation === 'portrait') {
+            return 'with_summary';
+        }
+
+        if ($ticketPrintOrientation === 'portrait_with_first_qr') {
+            return 'without_summary';
+        }
+
+        return in_array($ticketPrintOrientation, ['with_summary', 'without_summary'], true)
+            ? $ticketPrintOrientation
+            : 'without_summary';
+    }
+
+    private function sanitizeTicketFooterText(?string $value): string
+    {
+        $text = trim((string) $value);
+
+        return in_array($text, ['', '-', '--'], true) ? '' : $text;
+    }
+
+    private function countTicketTextLines(string $value): int
+    {
+        $text = $this->sanitizeTicketFooterText($value);
+        if ($text === '') {
+            return 0;
+        }
+
+        $lines = preg_split('/\r\n|\r|\n/', $text) ?: [];
+        $nonEmptyLines = array_filter($lines, static fn ($line) => trim((string) $line) !== '');
+
+        return max(count($nonEmptyLines), 1);
     }
 
     private function encodeImageAsDataUri(string $path): string
