@@ -714,7 +714,11 @@ public function update(UpdateMemberRequest $request, Member $member)
         }
 
         try {
-            $member = Member::where('rfid', $rfid)->first();
+            $member = Member::query()
+                ->where('rfid', $rfid)
+                ->orWhere('qr_code', $rfid)
+                ->orWhere('member_code', $rfid)
+                ->first();
 
             if (!$member) {
                 Log::warning('Member lookup failed: member not found', [
