@@ -130,7 +130,7 @@ class ApiController extends Controller
                 $accessUsed = max((int) ($member->access_used ?? 0), 0);
                 $isUnlimitedAccess = $maxAccess === 0;
                 if (!$isUnlimitedAccess && $accessUsed >= $maxAccess) return response()->json(["status" => 'close', "message" => "Kuota akses habis", "count" => 0, "membership_access" => ["type" => "limited", "limit" => $maxAccess, "used" => $accessUsed, "remaining" => 0]], 500);
-                $gates = $membership->gates()->pluck('id')->toArray();
+                $gates = $membership->gates()->pluck('gate_accesses.gate_access_id')->toArray();
                 if (in_array($request->gate, $gates)) {
                     History::create(['member_id' => $member->id, 'gate' => $request->gate, 'user_id' => 0, 'waktu' => now('Asia/Jakarta')->format('Y-m-d H:i:s')]);
                     $member->increment('access_used');
