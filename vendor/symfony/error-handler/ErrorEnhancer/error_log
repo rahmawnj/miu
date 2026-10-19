@@ -1,0 +1,12 @@
+[13-Mar-2026 14:42:21 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Interface "Symfony\Component\ErrorHandler\ErrorEnhancer\ErrorEnhancerInterface" not found in /home/tazd4675/public_html/miu.tazaka.co.id/vendor/symfony/error-handler/ErrorEnhancer/UndefinedMethodErrorEnhancer.php:20
+Stack trace:
+#0 {main}
+  thrown in /home/tazd4675/public_html/miu.tazaka.co.id/vendor/symfony/error-handler/ErrorEnhancer/UndefinedMethodErrorEnhancer.php on line 20
+[13-Mar-2026 14:54:44 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Interface "Symfony\Component\ErrorHandler\ErrorEnhancer\ErrorEnhancerInterface" not found in /home/tazd4675/public_html/miu.tazaka.co.id/vendor/symfony/error-handler/ErrorEnhancer/UndefinedFunctionErrorEnhancer.php:20
+Stack trace:
+#0 {main}
+  thrown in /home/tazd4675/public_html/miu.tazaka.co.id/vendor/symfony/error-handler/ErrorEnhancer/UndefinedFunctionErrorEnhancer.php on line 20
+[13-Mar-2026 14:55:39 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Interface "Symfony\Component\ErrorHandler\ErrorEnhancer\ErrorEnhancerInterface" not found in /home/tazd4675/public_html/miu.tazaka.co.id/vendor/symfony/error-handler/ErrorEnhancer/ClassNotFoundErrorEnhancer.php:22
+Stack trace:
+#0 {main}
+  thrown in /home/tazd4675/public_html/miu.tazaka.co.id/vendor/symfony/error-handler/ErrorEnhancer/ClassNotFoundErrorEnhancer.php on line 22

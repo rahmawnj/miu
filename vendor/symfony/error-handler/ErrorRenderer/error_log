@@ -1,0 +1,12 @@
+[13-Mar-2026 14:07:57 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Interface "Symfony\Component\ErrorHandler\ErrorRenderer\ErrorRendererInterface" not found in /home/tazd4675/public_html/miu.tazaka.co.id/vendor/symfony/error-handler/ErrorRenderer/SerializerErrorRenderer.php:25
+Stack trace:
+#0 {main}
+  thrown in /home/tazd4675/public_html/miu.tazaka.co.id/vendor/symfony/error-handler/ErrorRenderer/SerializerErrorRenderer.php on line 25
+[13-Mar-2026 15:32:08 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Interface "Symfony\Component\ErrorHandler\ErrorRenderer\ErrorRendererInterface" not found in /home/tazd4675/public_html/miu.tazaka.co.id/vendor/symfony/error-handler/ErrorRenderer/CliErrorRenderer.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/tazd4675/public_html/miu.tazaka.co.id/vendor/symfony/error-handler/ErrorRenderer/CliErrorRenderer.php on line 24
+[13-Mar-2026 15:32:53 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Interface "Symfony\Component\ErrorHandler\ErrorRenderer\ErrorRendererInterface" not found in /home/tazd4675/public_html/miu.tazaka.co.id/vendor/symfony/error-handler/ErrorRenderer/HtmlErrorRenderer.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/tazd4675/public_html/miu.tazaka.co.id/vendor/symfony/error-handler/ErrorRenderer/HtmlErrorRenderer.php on line 24

@@ -1,0 +1,8 @@
+[13-Mar-2026 18:01:07 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Interface "Flasher\Prime\FlasherInterface" not found in /home/tazd4675/public_html/miu.tazaka.co.id/vendor/php-flasher/flasher/Flasher.php:20
+Stack trace:
+#0 {main}
+  thrown in /home/tazd4675/public_html/miu.tazaka.co.id/vendor/php-flasher/flasher/Flasher.php on line 20
+[13-Mar-2026 20:41:11 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Interface "Flasher\Prime\FlasherInterface" not found in /home/tazd4675/public_html/miu.tazaka.co.id/vendor/php-flasher/flasher/Flasher.php:20
+Stack trace:
+#0 {main}
+  thrown in /home/tazd4675/public_html/miu.tazaka.co.id/vendor/php-flasher/flasher/Flasher.php on line 20

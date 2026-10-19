@@ -1,0 +1,8 @@
+[13-Mar-2026 12:40:51 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Class "Psr\Log\AbstractLogger" not found in /home/tazd4675/public_html/miu.tazaka.co.id/vendor/symfony/error-handler/BufferingLogger.php:21
+Stack trace:
+#0 {main}
+  thrown in /home/tazd4675/public_html/miu.tazaka.co.id/vendor/symfony/error-handler/BufferingLogger.php on line 21
+[13-Mar-2026 12:40:52 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Class "Psr\Log\AbstractLogger" not found in /home/tazd4675/public_html/miu.tazaka.co.id/vendor/symfony/error-handler/BufferingLogger.php:21
+Stack trace:
+#0 {main}
+  thrown in /home/tazd4675/public_html/miu.tazaka.co.id/vendor/symfony/error-handler/BufferingLogger.php on line 21

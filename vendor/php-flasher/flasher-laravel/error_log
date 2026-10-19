@@ -1,0 +1,8 @@
+[13-Mar-2026 17:43:51 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Class "Flasher\Laravel\Support\ServiceProvider" not found in /home/tazd4675/public_html/miu.tazaka.co.id/vendor/php-flasher/flasher-laravel/FlasherServiceProvider.php:49
+Stack trace:
+#0 {main}
+  thrown in /home/tazd4675/public_html/miu.tazaka.co.id/vendor/php-flasher/flasher-laravel/FlasherServiceProvider.php on line 49
+[13-Mar-2026 20:24:53 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Class "Flasher\Laravel\Support\ServiceProvider" not found in /home/tazd4675/public_html/miu.tazaka.co.id/vendor/php-flasher/flasher-laravel/FlasherServiceProvider.php:49
+Stack trace:
+#0 {main}
+  thrown in /home/tazd4675/public_html/miu.tazaka.co.id/vendor/php-flasher/flasher-laravel/FlasherServiceProvider.php on line 49

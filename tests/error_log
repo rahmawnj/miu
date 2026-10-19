@@ -1,0 +1,8 @@
+[13-Mar-2026 15:23:43 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Class "Illuminate\Foundation\Testing\TestCase" not found in /home/tazd4675/public_html/miu.tazaka.co.id/tests/TestCase.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/tazd4675/public_html/miu.tazaka.co.id/tests/TestCase.php on line 7
+[13-Mar-2026 16:11:18 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Class "Illuminate\Foundation\Testing\TestCase" not found in /home/tazd4675/public_html/miu.tazaka.co.id/tests/TestCase.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/tazd4675/public_html/miu.tazaka.co.id/tests/TestCase.php on line 7
