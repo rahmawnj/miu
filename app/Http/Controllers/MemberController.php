@@ -699,17 +699,55 @@ public function update(UpdateMemberRequest $request, Member $member)
 
     public function findOne(Request $request)
     {
-        $member = Member::where('rfid', $request->rfid)->first();
+        $rfid = trim((string) $request->input('rfid', ''));
 
-        if ($member) {
-            return response()->json([
-                'status' => 'success',
-                'member' => $member
+        if ($rfid === '') {
+            Log::warning('Member lookup failed: RFID is empty', [
+                'endpoint' => 'findOne',
+                'ip' => $request->ip(),
             ]);
-        } else {
+
             return response()->json([
                 'status' => 'error',
+                'message' => 'RFID wajib diisi.',
+            ], 400);
+        }
+
+        try {
+            $member = Member::where('rfid', $rfid)->first();
+
+            if (!$member) {
+                Log::warning('Member lookup failed: member not found', [
+                    'endpoint' => 'findOne',
+                    'rfid' => $rfid,
+                    'ip' => $request->ip(),
+                ]);
+
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Member tidak ditemukan.',
+                ], 404);
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'member' => $member,
             ]);
+        } catch (\\Throwable $e) {
+            Log::error('Member lookup API exception', [
+                'endpoint' => 'findOne',
+                'rfid' => $rfid,
+                'ip' => $request->ip(),
+                'exception' => get_class($e),
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan saat mencari member.',
+            ], 500);
         }
     }
 
