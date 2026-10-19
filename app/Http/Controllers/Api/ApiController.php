@@ -131,7 +131,9 @@ class ApiController extends Controller
                 $isUnlimitedAccess = $maxAccess === 0;
                 if (!$isUnlimitedAccess && $accessUsed >= $maxAccess) return response()->json(["status" => 'close', "message" => "Kuota akses habis", "count" => 0, "membership_access" => ["type" => "limited", "limit" => $maxAccess, "used" => $accessUsed, "remaining" => 0]], 500);
                 $gates = $membership->gates()->pluck('gate_accesses.gate_access_id')->toArray();
-                if (in_array($request->gate, $gates)) {
+                if (in_array((string) $request->gate, array_map('strval', $gates))) {
+                    $cooldown = $this->memberScanCooldownResponse($member, $maxAccess, $accessUsed, $isUnlimitedAccess);
+                    if ($cooldown) return $cooldown;
                     History::create(['member_id' => $member->id, 'gate' => $request->gate, 'user_id' => 0, 'waktu' => now('Asia/Jakarta')->format('Y-m-d H:i:s')]);
                     $member->increment('access_used');
                     $accessUsed += 1;
@@ -191,6 +193,41 @@ class ApiController extends Controller
         if ($limit <= 0) return $qty;
         if ($qty <= 0) return $limit;
         return $qty * $limit;
+    }
+
+    private function memberScanCooldownResponse(Member $member, int $maxAccess, int $accessUsed, bool $isUnlimitedAccess): ?\Illuminate\Http\JsonResponse
+    {
+        $cooldownSeconds = max((int) Setting::valueOf('ticket_scan_cooldown_seconds', 0), 0);
+        if ($cooldownSeconds <= 0) return null;
+
+        $lastHistory = History::where('member_id', $member->id)
+            ->where('user_id', 0)
+            ->orderByDesc('waktu')
+            ->orderByDesc('id')
+            ->first();
+
+        if (!$lastHistory || empty($lastHistory->waktu)) return null;
+
+        $lastScannedAt = Carbon::parse($lastHistory->waktu, 'Asia/Jakarta');
+        $elapsedSeconds = $lastScannedAt->diffInSeconds(Carbon::now('Asia/Jakarta'), false);
+        $remainingSeconds = $cooldownSeconds - $elapsedSeconds;
+        if ($remainingSeconds <= 0) return null;
+
+        $remainingAccess = $isUnlimitedAccess ? null : max($maxAccess - $accessUsed, 0);
+
+        return response()->json([
+            "status" => "wait",
+            "message" => "Member belum bisa discan lagi. Tunggu {$remainingSeconds} detik.",
+            "count" => $remainingAccess,
+            "cooldown_seconds" => $cooldownSeconds,
+            "remaining_seconds" => $remainingSeconds,
+            "membership_access" => [
+                "type" => $isUnlimitedAccess ? "unlimited" : "limited",
+                "limit" => $isUnlimitedAccess ? null : $maxAccess,
+                "used" => $accessUsed,
+                "remaining" => $remainingAccess,
+            ],
+        ], 429);
     }
 
     private function ticketScanCooldownResponse(DetailTransaction $ticket): ?\Illuminate\Http\JsonResponse
