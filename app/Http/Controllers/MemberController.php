@@ -733,7 +733,7 @@ public function update(UpdateMemberRequest $request, Member $member)
                 'status' => 'success',
                 'member' => $member,
             ]);
-        } catch (\\Throwable $e) {
+        } catch (\Throwable $e) {
             Log::error('Member lookup API exception', [
                 'endpoint' => 'findOne',
                 'rfid' => $rfid,
