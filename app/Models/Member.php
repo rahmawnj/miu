@@ -13,7 +13,7 @@ class Member extends Model
     use HasFactory;
     private static ?int $cachedSuspendDays = null;
 
-    protected $fillable = ["parent_id", "membership_id", "member_code", "rfid", "no_ktp", "no_hp", "nama", "alamat", "tgl_lahir", "tgl_register", "tgl_expired", "saldo", "jenis_kelamin", "image_profile", "qr_code", "is_active", "limit", "jenis_member", "access_used"];
+    protected $fillable = ["parent_id", "membership_id", "member_code", "rfid", "no_ktp", "no_hp", "nama", "alamat", "tgl_lahir", "tgl_register", "tgl_expired", "saldo", "jenis_kelamin", "image_profile", "qr_code", "is_active", "limit", "jenis_member", "access_used", "access_used_date"];
 
     function histories(): HasMany
     {
