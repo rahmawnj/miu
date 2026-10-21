@@ -126,6 +126,14 @@ class ApiController extends Controller
             if ($now >= $member->tgl_register && $now <= $member->tgl_expired) {
                 $membership = Membership::find($member->membership_id);
                 if (!$membership) return response()->json(["status" => "error", "message" => "Member not subcribed"], 500);
+                // Member Max Access is a daily quota based on Asia/Jakarta calendar date.
+                $todayAccessDate = Carbon::now('Asia/Jakarta')->toDateString();
+                if (($member->access_used_date ?? null) !== $todayAccessDate) {
+                    $member->access_used = 0;
+                    $member->access_used_date = $todayAccessDate;
+                    $member->save();
+                }
+
                 $maxAccess = max((int) ($membership->max_access ?? 0), 0);
                 $accessUsed = max((int) ($member->access_used ?? 0), 0);
                 $isUnlimitedAccess = $maxAccess === 0;
