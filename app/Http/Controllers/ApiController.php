@@ -15,6 +15,7 @@ use App\Models\Transaction;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ApiController extends Controller
 {
@@ -178,6 +179,18 @@ class ApiController extends Controller
     // In Use
     public function check(Request $request)
     {
+        // Member scan mengirim iddev; ticket scan mengirim gate.
+        $isMemberScan = $request->filled('iddev');
+
+        Log::info('SCAN TICKET/CARD DITERIMA', [
+            'jenis_scan' => $isMemberScan ? 'member' : 'ticket',
+            'ticket' => $request->input('ticket'),
+            'iddev' => $request->input('iddev'),
+            'gate' => $request->input('gate'),
+            'ip' => $request->ip(),
+            'waktu' => now('Asia/Jakarta')->toDateTimeString(),
+        ]);
+
         if (empty($request->ticket)) {
             return response()->json([
                 "status" => "error",
@@ -185,7 +198,8 @@ class ApiController extends Controller
             ], 400);
         }
 
-        $transScanned = DetailTransaction::with('transaction')
+        // Kalau parameter iddev ada, proses sebagai member/kartu, bukan ticket.
+        $transScanned = $isMemberScan ? null : DetailTransaction::with('transaction')
             ->where('ticket_code', $request->ticket)
             ->first();
 
@@ -305,10 +319,10 @@ class ApiController extends Controller
 
                     $gates = $membership->gates()->pluck('id')->toArray();
 
-                    if (in_array($request->gate, $gates)) {
+                    if (in_array($request->iddev, $gates)) {
                         History::create([
                             'member_id' => $member->id,
-                            'gate' => $request->gate,
+                            'gate' => $request->iddev,
                             'user_id' => 0,
                             'waktu' => now('Asia/Jakarta')->format('Y-m-d H:i:s')
                         ]);
@@ -358,7 +372,7 @@ class ApiController extends Controller
 
                 History::create([
                     'member_id' => 0,
-                    'gate' => $request->gate,
+                    'gate' => $request->iddev,
                     'user_id' => $employe->id,
                     'waktu' => now('Asia/Jakarta')->format('Y-m-d H:i:s')
                 ]);
