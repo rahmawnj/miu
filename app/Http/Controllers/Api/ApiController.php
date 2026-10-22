@@ -83,7 +83,7 @@ class ApiController extends Controller
             if (!$this->isTicketWithinValidity($transScanned->transaction?->created_at)) return response()->json(["status" => "close", "message" => "Ticket expired"]);
 
             $invoice = Transaction::where('id', $transScanned->transaction_id)->first();
-            DetailTransaction::where('ticket_code', $request->ticket)->update(["gate" => $request->gate]);
+            DetailTransaction::where('ticket_code', $request->ticket)->update(["gate" => $request->input('iddev') ?? $request->input('gate')]);
             $transScanned->refresh();
             if (!$transScanned) return response()->json(["status" => "Not found"]);
 
