@@ -77,13 +77,14 @@ class ApiController extends Controller
     public function check(Request $request)
     {
         if (empty($request->ticket)) return response()->json(["status" => "error", "message" => "QR Code/Ticket tidak boleh kosong!"], 400);
+        if (!$request->filled('iddev')) return response()->json(["status" => "error", "message" => "Parameter iddev wajib diisi!"], 400);
 
         $transScanned = DetailTransaction::with('transaction')->where('ticket_code', $request->ticket)->first();
         if ($transScanned) {
             if (!$this->isTicketWithinValidity($transScanned->transaction?->created_at)) return response()->json(["status" => "close", "message" => "Ticket expired"]);
 
             $invoice = Transaction::where('id', $transScanned->transaction_id)->first();
-            DetailTransaction::where('ticket_code', $request->ticket)->update(["gate" => $request->input('iddev') ?? $request->input('gate')]);
+            DetailTransaction::where('ticket_code', $request->ticket)->update(["gate" => $request->iddev]);
             $transScanned->refresh();
             if (!$transScanned) return response()->json(["status" => "Not found"]);
 
@@ -139,10 +140,10 @@ class ApiController extends Controller
                 $isUnlimitedAccess = $maxAccess === 0;
                 if (!$isUnlimitedAccess && $accessUsed >= $maxAccess) return response()->json(["status" => 'close', "message" => "Kuota akses habis", "count" => 0, "membership_access" => ["type" => "limited", "limit" => $maxAccess, "used" => $accessUsed, "remaining" => 0]], 500);
                 $gates = $membership->gates()->pluck('gate_accesses.gate_access_id')->toArray();
-                if (in_array((string) $request->gate, array_map('strval', $gates))) {
+                if (in_array((string) $request->iddev, array_map('strval', $gates))) {
                     $cooldown = $this->memberScanCooldownResponse($member, $maxAccess, $accessUsed, $isUnlimitedAccess);
                     if ($cooldown) return $cooldown;
-                    History::create(['member_id' => $member->id, 'gate' => $request->gate, 'user_id' => 0, 'waktu' => now('Asia/Jakarta')->format('Y-m-d H:i:s')]);
+                    History::create(['member_id' => $member->id, 'gate' => $request->iddev, 'user_id' => 0, 'waktu' => now('Asia/Jakarta')->format('Y-m-d H:i:s')]);
                     $member->increment('access_used');
                     $accessUsed += 1;
                     $remainingAccess = $isUnlimitedAccess ? null : max($maxAccess - $accessUsed, 0);
@@ -155,7 +156,7 @@ class ApiController extends Controller
         }
         if ($employe) {
             if ($employe->is_active == 0) return response()->json(["status" => 'close', "message" => "Karyawan sudah tidak aktif"]);
-            History::create(['member_id' => 0, 'gate' => $request->gate, 'user_id' => $employe->id, 'waktu' => now('Asia/Jakarta')->format('Y-m-d H:i:s')]);
+            History::create(['member_id' => 0, 'gate' => $request->iddev, 'user_id' => $employe->id, 'waktu' => now('Asia/Jakarta')->format('Y-m-d H:i:s')]);
             return response()->json(["status" => 'open', "message" => "Gate user"]);
         }
         return response()->json(["status" => 'close', "message" => "Card tidak terdaftar"]);
