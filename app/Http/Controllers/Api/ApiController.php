@@ -77,14 +77,14 @@ class ApiController extends Controller
     public function check(Request $request)
     {
         if (empty($request->ticket)) return response()->json(["status" => "error", "message" => "QR Code/Ticket tidak boleh kosong!"], 400);
-        if (!$request->filled('iddev')) return response()->json(["status" => "error", "message" => "Parameter iddev wajib diisi!"], 400);
 
         $transScanned = DetailTransaction::with('transaction')->where('ticket_code', $request->ticket)->first();
         if ($transScanned) {
+            if (!$request->filled('gate')) return response()->json(["status" => "error", "message" => "Parameter gate wajib diisi untuk ticket!"], 400);
             if (!$this->isTicketWithinValidity($transScanned->transaction?->created_at)) return response()->json(["status" => "close", "message" => "Ticket expired"]);
 
             $invoice = Transaction::where('id', $transScanned->transaction_id)->first();
-            DetailTransaction::where('ticket_code', $request->ticket)->update(["gate" => $request->iddev]);
+            DetailTransaction::where('ticket_code', $request->ticket)->update(["gate" => $request->gate]);
             $transScanned->refresh();
             if (!$transScanned) return response()->json(["status" => "Not found"]);
 
@@ -119,6 +119,8 @@ class ApiController extends Controller
             // The final successful scan is still OPEN with count 0. The next scan is CLOSE.
             return response()->json(["status" => "open", "count" => max(0, $maxAllowed - $counting), "message" => "OK"]);
         }
+
+        if (!$request->filled('iddev')) return response()->json(["status" => "error", "message" => "Parameter iddev wajib diisi untuk member/kartu!"], 400);
 
         $now = now('Asia/Jakarta')->format('Y-m-d');
         $member = Member::where('rfid', $request->ticket)->orWhere('qr_code', $request->ticket)->first();
