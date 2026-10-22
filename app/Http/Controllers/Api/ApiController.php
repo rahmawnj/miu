@@ -179,18 +179,6 @@ class ApiController extends Controller
     // In Use
     public function check(Request $request)
     {
-        // Member scan mengirim iddev; ticket scan mengirim gate.
-        $isMemberScan = $request->filled('iddev');
-
-        Log::info('SCAN TICKET/CARD DITERIMA', [
-            'jenis_scan' => $isMemberScan ? 'member' : 'ticket',
-            'ticket' => $request->input('ticket'),
-            'iddev' => $request->input('iddev'),
-            'gate' => $request->input('gate'),
-            'ip' => $request->ip(),
-            'waktu' => now('Asia/Jakarta')->toDateTimeString(),
-        ]);
-
         if (empty($request->ticket)) {
             return response()->json([
                 "status" => "error",
@@ -198,10 +186,20 @@ class ApiController extends Controller
             ], 400);
         }
 
-        // Kalau parameter iddev ada, proses sebagai member/kartu, bukan ticket.
-        $transScanned = $isMemberScan ? null : DetailTransaction::with('transaction')
+        // Cari ticket terlebih dahulu. Ticket dan member sama-sama mengirim iddev.
+        // Jangan menentukan jenis scan hanya dari ada/tidaknya parameter iddev.
+        $transScanned = DetailTransaction::with('transaction')
             ->where('ticket_code', $request->ticket)
             ->first();
+        $isMemberScan = !$transScanned;
+
+        Log::info('SCAN TICKET/CARD DITERIMA', [
+            'jenis_scan' => $isMemberScan ? 'member' : 'ticket',
+            'ticket' => $request->input('ticket'),
+            'iddev' => $request->input('iddev'),
+            'ip' => $request->ip(),
+            'waktu' => now('Asia/Jakarta')->toDateTimeString(),
+        ]);
 
         if ($transScanned) {
             if (!$this->isTicketWithinValidity($transScanned->transaction?->created_at)) {
@@ -215,7 +213,7 @@ class ApiController extends Controller
 
             DetailTransaction::where('ticket_code', $request->ticket)
                 ->update([
-                    "gate" => $request->gate,
+                    "gate" => $request->iddev,
                 ]);
 
             $transScanned->refresh();
